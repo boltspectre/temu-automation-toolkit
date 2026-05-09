@@ -50,7 +50,7 @@
 #### 1. 克隆仓库
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:boltspectre/temu-automation-toolkit.git
 cd temu-automation-toolkit
 ```
 
