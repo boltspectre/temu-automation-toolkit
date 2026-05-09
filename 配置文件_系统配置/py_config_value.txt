@@ -1,0 +1,4 @@
+py_config_value_path = 配置文件_系统配置/py_config_value.txt
+proxy_file_path = 配置文件_系统配置/proxy.txt
+api_proxy_file_path = 配置文件_系统配置/api_proxy.txt
+api_proxy_port = 7899

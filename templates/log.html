@@ -1,0 +1,53 @@
+<!-- static/log_viewer.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>实时日志查看器</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; font-size: 14px; }
+        #log-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 80vh;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            white-space: pre-wrap; /* 保留换行符 */
+        }
+        .log-DEBUG { color: gray; }
+        .log-INFO { color: black; }
+        .log-SUCCESS { color: green; }
+        .log-WARNING { color: orange; }
+        .log-ERROR { color: red; font-weight: bold; }
+        .log-CRITICAL { color: red; font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>实时日志流</h1>
+    <div id="log-container"></div>
+
+    <script>
+        const logContainer = document.getElementById('log-container');
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${wsProtocol}//${window.location.host}/api/logs/ws?token=ikun`);
+
+        ws.onmessage = function(event) {
+            const logRecord = JSON.parse(event.data);
+            const logLine = `[${logRecord.time}] [${logRecord.level}] ${logRecord.message}\n`;
+
+            const logElement = document.createElement('div');
+            logElement.className = `log-${logRecord.level}`;
+            logElement.textContent = logLine;
+
+            logContainer.appendChild(logElement);
+            logContainer.scrollTop = logContainer.scrollHeight; // 自动滚动到底部
+        };
+
+        ws.onclose = function() {
+            const disconnectMessage = document.createElement('div');
+            disconnectMessage.style.color = 'red';
+            disconnectMessage.textContent = '与服务器的连接已断开...\n';
+            logContainer.appendChild(disconnectMessage);
+        };
+    </script>
+</body>
+</html>

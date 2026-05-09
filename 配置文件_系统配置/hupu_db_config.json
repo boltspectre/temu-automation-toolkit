@@ -1,0 +1,18 @@
+{
+  "db_path": "./配置文件_系统配置/hupu.db",
+  "timeout": 30.0,
+  "check_same_thread": false,
+  "enable_foreign_keys": true,
+  "journal_mode": "WAL",
+  "cache_size": -20000,
+  "synchronous": "NORMAL",
+  "pool_config": {
+    "max_connections": 9999,
+    "min_connections": 1,
+    "connection_timeout": 30.0,
+    "idle_timeout": 300.0,
+    "pool_recycle": 3600,
+    "pool_pre_ping": true
+  },
+  "debug": false
+}

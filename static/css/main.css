@@ -1,0 +1,2432 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #eff6ff;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    font-size: 13px;
+    overflow-x: hidden;
+}
+
+/* Pending按钮样式 */
+.ui.pending.button {
+    background-color: #fbbd08 !important;
+    color: #fff !important;
+    border-color: #fbbd08 !important;
+}
+
+.ui.pending.button:hover {
+    background-color: #eaae00 !important;
+    color: #fff !important;
+    border-color: #eaae00 !important;
+}
+
+/* 气泡样式 */
+.bubble {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99; /* 低于页面可交互元素 */
+}
+
+/* 点击触发的气泡动画 */
+.bubble.click {
+    animation: clickBubble 0.5s ease-out forwards;
+}
+
+/* 滑动触发的气泡动画 */
+.bubble.move {
+    animation: moveBubble 1s ease-out forwards;
+}
+
+@keyframes clickBubble {
+    0% {
+        transform: scale(0);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes moveBubble {
+    0% {
+        transform: translateY(0) scale(0.7);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* ===== 分布式任务管理器状态样式 ===== */
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.status-indicator.running {
+    background-color: #21ba45;
+    box-shadow: 0 0 0 0 rgba(33, 186, 69, 0.4);
+    animation: pulse 2s infinite;
+}
+
+.status-indicator.stopped {
+    background-color: #db2828;
+    box-shadow: 0 0 0 0 rgba(219, 40, 40, 0.4);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(33, 186, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(33, 186, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(33, 186, 69, 0);
+    }
+}
+
+.process-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.process-info span {
+    font-size: 14px;
+    color: #333;
+}
+
+.process-details {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.process-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border-left: 3px solid #ddd;
+}
+
+.process-item:hover {
+    background-color: #f0f0f0;
+}
+
+.process-id {
+    font-weight: bold;
+    color: #333;
+}
+
+.process-status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.process-status.running {
+    background-color: #e8f5e8;
+    color: #27672d;
+}
+
+.process-status.starting {
+    background-color: #fff8db;
+    color: #9a6d3a;
+}
+
+.process-status.stopped {
+    background-color: #fddfdf;
+    color: #9f3a38;
+}
+
+.process-status.idle {
+    background-color: #f0f0f0;
+    color: #555;
+}
+
+.process-tasks, .process-total {
+    font-size: 12px;
+    color: #666;
+}
+
+/* 应用布局 */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 左侧菜单 */
+.sidebar {
+    width: 220px;
+    background: #1e40af;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(30, 64, 175, 0.4);
+    border-radius: 0 12px 12px 0;
+    transition: all 0.2s ease;
+}
+
+.sidebar-header {
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-header h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-header h2 i {
+    margin: 0;
+}
+
+.version-text {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 0.3rem;
+    font-weight: normal;
+}
+
+.menu-items {
+    padding: 0.5rem 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin: 0.2rem 0.5rem;
+    position: relative;
+    user-select: none;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menu-item.active {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menu-item:active {
+    transform: translateX(4px) scale(0.98);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.1s ease;
+}
+
+.menu-item i {
+    margin-right: 0.8rem;
+    width: 20px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.menu-item span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.5;
+}
+
+.menu-badge {
+    background: #60a5fa;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    margin-left: auto;
+    min-width: 24px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
+}
+
+/* 主体内容区域 */
+.main-content {
+    flex: 1;
+    margin-left: 220px;
+    padding: 2rem;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 状态指示器 */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #999;
+}
+
+.status-dot.running {
+    background: #21ba45;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.stopped {
+    background: #db2828;
+}
+
+/* 状态文字容器 */
+.status-text-container {
+    display: inline-flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 4px;
+    background-color: #f9f9f9;
+    margin-left: 5px;
+}
+
+.status-char {
+    display: inline-block;
+    padding: 2px 4px;
+    margin: 0 1px;
+    background-color: #e8e8e8;
+    border-radius: 2px;
+    font-weight: bold;
+    color: #333;
+}
+
+.status-char:first-child {
+    margin-left: 0;
+}
+
+.status-char:last-child {
+    margin-right: 0;
+}
+
+/* 运行状态时的样式 */
+.status-indicator.running .status-char {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+/* 停止状态时的样式 */
+.status-indicator.stopped .status-char {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* 日志容器 */
+.logs-container {
+    width: 100%;
+    height: 500px;
+    background: #1a202c;
+    color: #fff;
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+
+.log-entry {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    display: flex;
+    gap: 0.75rem;
+    line-height: 1.5;
+}
+
+.log-time {
+    color: #9f7aea;
+    white-space: nowrap;
+}
+
+.log-level {
+    font-weight: bold;
+    white-space: nowrap;
+    width: 70px;
+}
+
+.log-level.INFO {
+    color: #4299e1;
+}
+
+.log-level.ERROR {
+    color: #e53e3e;
+}
+
+.log-level.WARN {
+    color: #ed8936;
+}
+
+.log-level.DEBUG {
+    color: #a0aec0;
+}
+
+/* 店铺列表样式 */
+.shop-list-table, .shop-selection-table {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 店铺列表容器 - 添加水平滚动 */
+.shop-list-table {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* 弹窗中的店铺选择列表 - 添加最大高度和滚动 */
+.shop-selection-table {
+    max-height: 400px;
+}
+
+/* 宽模态框中的店铺选择列表 - 限制最大高度 */
+.wide-modal .shop-selection-table {
+    max-height: 500px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* 店铺列表表头和表体 - 使用固定最小宽度确保对齐 */
+.shop-list-header {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(120px, 1.2fr) minmax(120px, 1.2fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(90px, 0.8fr) minmax(250px, 2.5fr);
+    background: #60a5fa;
+    color: white;
+    font-weight: 500;
+    padding: 0.875rem;
+    min-width: 1080px; /* 确保最小宽度，防止列被压缩 */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-radius: 8px 8px 0 0;
+}
+
+.shop-selection-header {
+    display: grid;
+    grid-template-columns: 80px 2fr 1.5fr 1.5fr 2fr 1.5fr 2.5fr;
+    background: #60a5fa;
+    color: white;
+    font-weight: 500;
+    padding: 0.875rem;
+    min-width: 1200px;
+    border-radius: 8px 8px 0 0;
+}
+
+/* 宽模态框中的店铺选择列表表头 - 适配右侧面板 */
+.wide-modal .shop-selection-header {
+    grid-template-columns: 60px 1.5fr 1fr 1.2fr 1.5fr 1fr 2fr;
+    min-width: 0;
+    font-size: 0.85rem;
+    padding: 0.7rem;
+    border-radius: 8px 8px 0 0;
+    background: #60a5fa;
+}
+
+.shop-list-body {
+    background: white;
+    min-width: 1080px; /* 与表头保持一致 */
+    overflow-x: visible;
+}
+
+.shop-selection-body {
+    background: white;
+    min-width: 1200px;
+}
+
+/* 宽模态框中的店铺选择表体 */
+.wide-modal .shop-selection-body {
+    min-width: 0;
+}
+
+/* 弹窗中的店铺选择列表表体 - 可滚动 */
+.shop-selection-body {
+    max-height: 350px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* 宽模态框中的店铺选择列表表体 */
+.wide-modal .shop-selection-body {
+    flex: 1;
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+/* 店铺选择列表滚动条样式 */
+.shop-selection-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.shop-selection-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.shop-selection-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.shop-selection-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.shop-item-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(120px, 1.2fr) minmax(120px, 1.2fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(90px, 0.8fr) minmax(250px, 2.5fr);
+    padding: 0.875rem;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    transition: background 0.2s ease;
+    min-width: 1080px; /* 与表头保持一致 */
+}
+
+.shop-selection-row {
+    display: grid;
+    grid-template-columns: 80px 2fr 1.5fr 1.5fr 2fr 1.5fr 2.5fr;
+    padding: 0.875rem;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    transition: background 0.2s ease;
+    min-width: 1200px;
+    cursor: pointer;
+}
+
+/* 店铺选择复选框美化 */
+.shop-selection-row .shop-col.select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.shop-selection-row .shop-col.name,
+.shop-selection-row .shop-col.abbr {
+    cursor: pointer;
+    user-select: none;
+}
+
+.shop-selection-row .shop-col.select input[type="checkbox"] {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    background: white;
+    transition: all 0.3s ease;
+    z-index: 1;
+    outline: none;
+    pointer-events: none;
+}
+
+.shop-selection-row .shop-col.select input[type="checkbox"]:hover {
+    border-color: #2563EB;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.shop-selection-row .shop-col.select input[type="checkbox"]:checked {
+    border-color: #409eff;
+    background: #409eff;
+    animation: checkboxScale 0.1s ease;
+}
+
+.shop-selection-row .shop-col.select input[type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    opacity: 1;
+}
+
+.shop-selection-row .shop-col.select input[type="checkbox"]:disabled {
+    opacity: 0.7;
+    filter: grayscale(50%);
+    cursor: not-allowed;
+}
+
+.shop-selection-row .shop-col.select input[type="checkbox"]:disabled:hover {
+    border-color: #ddd;
+    transform: none;
+    box-shadow: none;
+}
+
+@keyframes checkboxScale {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 重复手机号行的样式 */
+.shop-selection-row.duplicate-phone-row {
+    background-color: #fff5f5;
+    border-left: 3px solid #ff6b6b;
+}
+
+.shop-selection-row.duplicate-phone-row:hover {
+    background-color: #ffe5e5;
+}
+
+/* 禁用行的灰色样式 */
+.shop-selection-row.disabled-row {
+    background-color: #f5f5f5;
+    color: #999;
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.shop-selection-row.disabled-row .shop-col {
+    color: #999;
+}
+
+.shop-selection-row.disabled-row .status-badge {
+    opacity: 0.6;
+}
+
+.shop-selection-row.disabled-row:hover {
+    background-color: #f5f5f5;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 宽模态框中的店铺选择行 - 适配右侧面板 */
+.wide-modal .shop-selection-row {
+    grid-template-columns: 60px 1.5fr 1fr 1.2fr 1.5fr 1fr 2fr;
+    min-width: 0;
+    padding: 0.7rem;
+    font-size: 0.85rem;
+}
+
+.shop-item-row {
+    transition: all 0.2s ease;
+}
+
+.shop-item-row:hover {
+    background: #f0f9ff;
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.shop-selection-row {
+    transition: all 0.2s ease;
+}
+
+.shop-selection-row:hover {
+    background: #f0f9ff;
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 确保店铺名称列有足够的空间 */
+.shop-selection-row .shop-col.name {
+    padding-left: 0;
+}
+
+.shop-selection-row {
+    transition: all 0.2s ease;
+}
+
+.shop-selection-row:hover {
+    background: #f0f9ff;
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 确保店铺名称列有足够的空间 */
+.shop-selection-row .shop-col.name {
+    padding-left: 0;
+}
+
+.shop-col {
+    text-align: left;
+    padding: 0 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0; /* 允许内容收缩 */
+}
+
+.shop-col.action {
+    text-align: right;
+    white-space: nowrap; /* 操作列不允许换行 */
+    min-width: 150px; /* 确保操作列有足够宽度 */
+}
+
+/* 特定列的内容处理 */
+.shop-col.name,
+.shop-col.abbr,
+.shop-col.id,
+.shop-col.phone,
+.shop-col.password {
+    word-break: break-all;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.shop-col.status,
+.shop-col.auth-status {
+    white-space: nowrap;
+    overflow: visible;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: nowrap; /* 操作按钮不换行 */
+}
+
+/* 状态徽章 */
+.status-badge {
+    padding: 0.25rem 0.625rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-badge.connected {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-badge.disconnected {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+/* 分页样式 */
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.page-btn {
+    padding: 0.5rem 0.875rem;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.page-btn:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.page-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: all 0.1s ease;
+}
+
+.page-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 模态框覆盖样式 - 确保与 Semantic UI 兼容 */
+.ui.modal {
+    /* 不覆盖 margin-top，让 Semantic UI 自动居中 */
+}
+
+/* 实拍图全部重跑任务模态框 - 更宽的样式（带店铺管理） */
+.ui.modal.wide-modal {
+    width: 1400px !important;
+    max-width: 95% !important;
+    max-height: 90vh !important;
+}
+
+/* 单面板任务模态框 - 较窄的样式（不带店铺管理） */
+.ui.modal.single-panel-modal {
+    width: 800px !important;
+    max-width: 95% !important;
+    max-height: 90vh !important;
+}
+
+/* 任务模态框左右分栏布局 */
+.task-modal-layout {
+    display: flex;
+    gap: 1.5rem;
+    min-height: 650px;
+}
+
+/* 虎扑任务居中布局（没有店铺选择） */
+.task-modal-layout.centered {
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.task-modal-layout.centered .task-form-panel {
+    flex: 0 0 600px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 编辑模式居中布局（更窄的宽度） */
+.task-modal-layout.edit-mode {
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.task-modal-layout.edit-mode .task-form-panel {
+    flex: 0 0 500px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.task-form-panel {
+    flex: 0 0 480px;
+    min-width: 0;
+    overflow-y: auto;
+    max-height: 700px;
+    padding: 1.5rem;
+    padding-right: 1rem;
+}
+
+/* 确保左侧表单字段对齐 */
+.task-form-panel .form-group {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.task-form-panel .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.task-form-panel .form-group select,
+.task-form-panel .form-group input {
+    width: 100%;
+}
+
+.task-form-panel .form-group small {
+    display: block;
+    margin-top: 0.25rem;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.85em;
+}
+
+.task-shop-panel {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+}
+
+.task-shop-panel #shopSelectionArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.ui.modal > .close {
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* 卡片样式调整 */
+.ui.card {
+    margin: 0 0 1rem 0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.ui.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ui.card:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.1s ease;
+}
+
+.ui.card .header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15em;
+}
+
+.ui.circular.label {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 控制面板卡片样式 - 更大的卡片 */
+#dashboard .ui.card {
+    min-height: 200px;
+}
+
+/* 系统概览卡片自定义样式 */
+.dashboard-card {
+    width: 100% !important;
+    transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.1s ease;
+}
+
+#dashboard .ui.card .content {
+    padding: 1.5em;
+}
+
+#dashboard .ui.card .description {
+    font-size: 0.95em;
+    line-height: 1.6;
+    margin-top: 0.5em;
+    min-height: 3.2em;
+    display: flex;
+    align-items: flex-start;
+}
+
+#dashboard .ui.card .description p {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#dashboard .ui.card .extra.content {
+    padding: 1em 1.5em;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button {
+    width: 100%;
+    margin-top: 10px;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #fbbd08;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(251, 189, 8, 0.2);
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button:hover {
+    background-color: #eaae00;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(251, 189, 8, 0.3);
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button:active {
+    background-color: #d4a000;
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 2px 6px rgba(251, 189, 8, 0.2);
+    transition: all 0.1s ease;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button:disabled {
+    background-color: #94A3B8;
+    color: #E2E8F0;
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button {
+    width: 100%;
+    margin-top: 10px;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #fbbd08;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(251, 189, 8, 0.2);
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button:hover {
+    background-color: #eaae00;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(251, 189, 8, 0.3);
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button:active {
+    background-color: #d4a000;
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 2px 6px rgba(251, 189, 8, 0.2);
+    transition: all 0.1s ease;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button:disabled {
+    background-color: #94A3B8;
+    color: #E2E8F0;
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+#dashboard .ui.card .extra.content .ui.primary.button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* 系统概览卡片网格布局 - 响应式自适应 */
+#dashboard .ui.three.column.grid,
+#dashboard .ui.four.column.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.2rem;
+    margin: 0;
+}
+
+#dashboard .ui.three.column.grid > .column,
+#dashboard .ui.four.column.grid > .column {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+}
+
+/* 大屏下限制最大宽度，避免卡片过度拉伸 */
+@media (min-width: 1200px) {
+    #dashboard .ui.three.column.grid,
+    #dashboard .ui.four.column.grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 480px));
+        gap: 1.5rem;
+        justify-content: center;
+    }
+}
+
+/* 超大屏下可以显示更多列 */
+@media (min-width: 1600px) {
+    #dashboard .ui.three.column.grid {
+        grid-template-columns: repeat(auto-fit, minmax(380px, 450px));
+        gap: 1.5rem;
+        justify-content: center;
+    }
+    
+    #dashboard .ui.four.column.grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 380px));
+        gap: 1.5rem;
+        justify-content: center;
+    }
+}
+
+/* 表单样式兼容 - 确保模态框中的旧类名仍然可用 */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.form-group p {
+    margin: 0.5rem 0;
+    color: rgba(0, 0, 0, 0.68);
+}
+
+.form-select,
+.form-control {
+    width: 100%;
+    padding: 0.67857143em 1em;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    border-radius: 0.28571429rem;
+    font-size: 1em;
+    transition: all 0.2s ease;
+    background-color: #fff8db;
+}
+
+.form-select:focus,
+.form-control:focus {
+    outline: none;
+    border-color: #fbbd08;
+    box-shadow: 0 0 0 2px rgba(251, 189, 8, 0.2);
+}
+
+.form-select {
+    background-color: #fff8db;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23434a54' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7em center;
+    padding-right: 2.5em;
+}
+
+/* 按钮样式兼容 */
+.btn {
+    display: inline-block;
+    padding: 0.78571429em 1.5em 0.78571429em;
+    border-radius: 0.28571429rem;
+    font-size: 1rem;
+    font-weight: 400;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+}
+
+.btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.1s ease;
+}
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+
+.btn:hover:not(:disabled) {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: #fbbd08;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(251, 189, 8, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+    padding: 0 24px;
+    height: 44px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #eaae00;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(251, 189, 8, 0.3);
+}
+
+.btn-primary:active {
+    background-color: #d4a000;
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 2px 6px rgba(251, 189, 8, 0.2);
+    transition: all 0.1s ease;
+}
+
+.btn-primary:disabled {
+    background-color: #94A3B8;
+    color: #E2E8F0;
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-primary.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(251, 189, 8, 0.2);
+    border: 1px solid #fbbd08;
+}
+
+.btn-secondary {
+    background-color: #767676;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5e5e5e;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #21ba45;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #16ab39;
+    color: #fff;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: #3b82f6;
+    border: 1px solid #3b82f6;
+}
+
+.btn-outline:hover {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.btn-sm {
+    padding: 0.57142857em 1em;
+    font-size: 0.875rem;
+}
+
+.btn-primary.btn-sm {
+    padding: 0.57142857em 1em;
+    height: auto;
+    font-size: 0.875rem;
+    font-weight: normal;
+}
+
+.btn-primary.btn-sm:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(251, 189, 8, 0.2);
+}
+
+.btn-primary.btn-sm:active {
+    transform: none;
+}
+
+.btn-danger {
+    background-color: #db2828;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #d01919;
+    color: #fff;
+}
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .shop-list-header,
+    .shop-selection-header,
+    .shop-item-row,
+    .shop-selection-row {
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+
+    .shop-selection-header {
+        grid-template-columns: 80px 2fr 1fr;
+    }
+
+    .shop-col:nth-child(4),
+    .shop-col:nth-child(5),
+    .shop-col:nth-child(6),
+    .shop-col:nth-child(7),
+    .shop-col:nth-child(8) {
+        display: none;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .action-buttons .ui.button {
+        width: 100%;
+        min-width: 80px;
+    }
+
+    .ui.three.column.grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .ui.three.column.grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* ========== Toast 提示组件样式 ========== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+.toast {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 0;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: auto;
+    min-width: 300px;
+    max-width: 400px;
+    overflow: hidden;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateX(400px);
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+}
+
+.toast-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    word-break: break-word;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #999;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.toast-close:hover {
+    color: #333;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Toast 类型样式 */
+.toast-success {
+    border-left: 4px solid #21ba45;
+}
+
+.toast-success .toast-icon {
+    color: #21ba45;
+}
+
+.toast-error {
+    border-left: 4px solid #db2828;
+}
+
+.toast-error .toast-icon {
+    color: #db2828;
+}
+
+.toast-warning {
+    border-left: 4px solid #f2711c;
+}
+
+.toast-warning .toast-icon {
+    color: #f2711c;
+}
+
+.toast-info {
+    border-left: 4px solid #2185d0;
+}
+
+.toast-info .toast-icon {
+    color: #2185d0;
+}
+
+/* 确认对话框样式 */
+.confirm-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.confirm-dialog-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.confirm-dialog {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    min-width: 400px;
+    max-width: 500px;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+    overflow: hidden;
+}
+
+.confirm-dialog-overlay.show .confirm-dialog {
+    transform: scale(1);
+}
+
+.confirm-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.confirm-header i {
+    color: #2185d0;
+    font-size: 20px;
+}
+
+.confirm-message {
+    padding: 20px 24px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+    word-break: break-word;
+}
+
+.confirm-actions {
+    padding: 16px 24px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.confirm-btn-cancel,
+.confirm-btn-ok {
+    min-width: 80px;
+}
+
+/* 任务筛选区域样式 */
+.task-filter-section {
+    margin-top: 12px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f0f9ff;
+    border-radius: 8px;
+    border: 1px solid #bae6fd;
+    box-shadow: 0 2px 4px rgba(56, 182, 255, 0.1);
+}
+
+.task-filter-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 0.9rem;
+}
+
+.task-filter-section .column {
+    padding:  10px !important;
+}
+
+/* 任务筛选按钮区域 */
+.task-filter-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.task-filter-actions .ui.button {
+    margin-left: 10px;
+}
+
+.task-filter-actions .ui.button:first-child {
+    margin-left: 0;
+}
+
+.task-filter-actions .ui.warning.button {
+    background-color: #f2711c;
+    color: white;
+    border-color: #f2711c;
+}
+
+.task-filter-actions .ui.warning.button:hover {
+    background-color: #e65c0a;
+    border-color: #e65c0a;
+}
+
+/* 任务列表表格样式 */
+.task-list-table {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    background: white;
+}
+
+.task-list-header {
+    display: grid;
+    /* 备注列加宽：给 remarks 更大的占比 + 最小宽度 */
+    grid-template-columns: 50px 60px 1.5fr 1fr 1.1fr minmax(420px, 3.2fr) 1.1fr 1.1fr 280px;
+    background: #60a5fa;
+    color: white;
+    font-weight: 500;
+    padding: 0.875rem;
+    gap: 10px;
+    border-radius: 8px 8px 0 0;
+}
+
+.task-list-header .task-col {
+    color: #fff;
+}
+
+.task-list-body {
+    background: white;
+}
+
+.task-item-row {
+    display: grid;
+    /* 与表头保持一致：备注列更宽 */
+    grid-template-columns: 50px 60px 1.5fr 1fr 1.1fr minmax(420px, 3.2fr) 1.1fr 1.1fr 280px;
+    padding: 0.875rem;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    transition: background 0.2s ease;
+    gap: 10px;
+}
+
+.task-item-row {
+    transition: all 0.2s ease;
+}
+
+.task-item-row:hover {
+    background: #f0f9ff;
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.task-item-row:last-child {
+    border-bottom: none;
+}
+
+.task-col {
+    text-align: left;
+    padding: 0 0.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.task-col.checkbox {
+    text-align: center;
+    padding: 0;
+}
+
+.task-col.checkbox input[type="checkbox"].task-checkbox {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    background: white;
+    transition: all 0.3s ease;
+    z-index: 1;
+    outline: none;
+}
+
+.task-col.checkbox input[type="checkbox"].task-checkbox:hover {
+    border-color: #fbbd08;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.task-col.checkbox input[type="checkbox"].task-checkbox:checked {
+    border-color: #409eff;
+    background: #409eff;
+    animation: checkboxScale 0.1s ease;
+}
+
+.task-col.checkbox input[type="checkbox"].task-checkbox:checked::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    opacity: 1;
+}
+
+.task-col.checkbox input[type="checkbox"].task-checkbox:disabled {
+    opacity: 0.7;
+    filter: grayscale(50%);
+    cursor: not-allowed;
+}
+
+.task-col.checkbox input[type="checkbox"].task-checkbox:disabled:hover {
+    border-color: #ddd;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 自定义全选复选框样式 */
+.task-col.checkbox input[type="checkbox"].custom-checkbox {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s;
+}
+
+/* 全选状态（完全选中） */
+.task-col.checkbox input[type="checkbox"].custom-checkbox:checked {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.task-col.checkbox input[type="checkbox"].custom-checkbox:checked::after {
+    content: '✓'; /* 全选显示对号 */
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+}
+
+/* 半选状态（自定义样式） */
+.task-col.checkbox input[type="checkbox"].custom-checkbox.indeterminate {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.task-col.checkbox input[type="checkbox"].custom-checkbox.indeterminate::after {
+    content: '🐔'; /* 半选显示小鸡表情 */
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: normal;
+}
+
+.task-col.msg {
+    word-break: break-all;
+    white-space: normal;
+    line-height: 1.4;
+    overflow: visible;
+}
+
+/* 篮球全选样式 */
+.basketball-select {
+    display: inline-block;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s;
+    transform: scale(1);
+}
+
+.basketball-select:hover {
+    transform: scale(1.1);
+}
+
+.task-col.remarks {
+    word-break: break-all;
+    white-space: normal;
+    line-height: 1.4;
+    /* 备注列限制最大高度，超出时内部滚动 */
+    max-height: 160px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px; /* 预留滚动条空间，避免遮挡文字 */
+    align-self: flex-start;
+}
+
+/* 备注列滚动条样式（可选：更贴合整体 UI） */
+.task-col.remarks::-webkit-scrollbar {
+    width: 8px;
+}
+
+.task-col.remarks::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.task-col.remarks::-webkit-scrollbar-thumb {
+    background: #b5b5b5;
+    border-radius: 4px;
+}
+
+.task-col.remarks::-webkit-scrollbar-thumb:hover {
+    background: #8f8f8f;
+}
+
+.task-col.id {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #333;
+    text-align: center;
+    font-weight: 500;
+}
+
+.task-col.status {
+    text-align: center;
+}
+
+.task-col.action {
+    text-align: right;
+    white-space: normal;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.task-col.operation {
+    text-align: center;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0.3rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-operation-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3rem;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.task-operation-buttons .ui.button {
+    padding: 0.4em 0.6em;
+    font-size: 0.8rem;
+    margin: 0;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.task-operation-buttons .ui.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.task-operation-buttons .ui.button:active {
+    transform: translateY(0) scale(0.96);
+    transition: all 0.1s ease;
+}
+
+.task-col.func {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #333;
+}
+
+/* 状态标签颜色区分 */
+.task-col.status .ui.label.success {
+    background: #e8fff2;
+    color: #0f7a3b;
+    border: 1px solid #b7f0cf;
+}
+
+.task-col.status .ui.label.error {
+    background: #fff0f0;
+    color: #b91c1c;
+    border: 1px solid #f5c2c7;
+}
+
+.task-col.status .ui.label.warning {
+    background: #fff8e1;
+    color: #a15c00;
+    border: 1px solid #f7d08a;
+}
+
+.task-col.status .ui.label.info {
+    background: #e7f3ff;
+    color: #125f9c;
+    border: 1px solid #b7d7ff;
+}
+
+.task-col.status .ui.label.default {
+    background: #f2f2f2;
+    color: #555;
+    border: 1px solid #e0e0e0;
+}
+
+/* 验证码状态 - 紫色专属样式 */
+.task-col.status .ui.label.captcha {
+    background: #faf5ff; /* 浅紫背景（柔和不刺眼） */
+    color: #5e07a8;      /* 深紫文字（对比清晰，可读性强） */
+    border: 1px solid #ddd6fe; /* 浅紫边框（增强立体感） */
+}
+
+/* 表头文字颜色保持白色 */
+.task-list-header .task-col.id,
+.task-list-header .task-col.func {
+    color: #fff;
+}
+
+/* 任务类型标记 */
+.task-type-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.task-type-tag.type-upload {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.task-type-tag.type-price {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.task-type-tag.type-adjust {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.task-type-tag.type-default {
+    background: #f2f2f2;
+    color: #555;
+    border: 1px solid #e0e0e0;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .toast-container {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: none;
+        transform: translateY(-100px);
+    }
+
+    .toast.show {
+        transform: translateY(0);
+    }
+
+    .toast.hide {
+        transform: translateY(-100px);
+    }
+
+    .confirm-dialog {
+        min-width: auto;
+        max-width: 90%;
+        margin: 20px;
+    }
+}
+
+/* 全新设计的复选框样式 */
+div.ui.checkbox {
+    position: relative !important;
+    display: inline-block !important;
+    min-height: 30px !important;
+    line-height: 30px !important;
+    min-width: 60px !important;
+    font-size: 1rem !important;
+}
+
+/* 复选框容器 */
+div.ui.checkbox .box,
+div.ui.checkbox label {
+    position: relative !important;
+    padding-left: 70px !important;
+    min-height: 30px !important;
+    line-height: 30px !important;
+    cursor: pointer !important;
+    outline: 0 !important;
+    display: block !important;
+}
+
+/* 复选框输入框 */
+div.ui.checkbox input[type="checkbox"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 60px !important;
+    height: 30px !important;
+    cursor: pointer !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-color: #95a5a6 !important;
+    border-radius: 15px !important;
+    transition: all 0.3s !important;
+    z-index: 1 !important;
+    outline: none !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+}
+
+/* 复选框输入框 - OFF状态 */
+div.ui.checkbox input[type="checkbox"]::before {
+    content: 'OFF' !important;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: white !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    z-index: 2 !important;
+}
+
+/* 复选框输入框 - 滑块 */
+div.ui.checkbox input[type="checkbox"]::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 26px !important;
+    height: 26px !important;
+    background: white !important;
+    border-radius: 50% !important;
+    top: 2px !important;
+    left: 2px !important;
+    transition: all 0.3s !important;
+    z-index: 3 !important;
+}
+
+/* 复选框输入框 - 选中状态 */
+div.ui.checkbox input[type="checkbox"]:checked {
+    background-color: #1abc9c !important;
+}
+
+/* 复选框输入框 - ON状态 */
+div.ui.checkbox input[type="checkbox"]:checked::before {
+    content: 'ON' !important;
+    left: 8px !important;
+    right: auto !important;
+}
+
+/* 复选框输入框 - 选中状态滑块位置 */
+div.ui.checkbox input[type="checkbox"]:checked::after {
+    left: 32px !important;
+}
+
+/* 隐藏原始的伪元素 */
+div.ui.checkbox .box:before,
+div.ui.checkbox .box:after,
+div.ui.checkbox label:before,
+div.ui.checkbox label:after {
+    display: none !important;
+}
+
+/* 禁用状态 */
+div.ui.checkbox.disabled input[type="checkbox"] {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+/* 只读状态 */
+div.ui.checkbox.read-only input[type="checkbox"] {
+    cursor: default !important;
+}
+
+/* 聚焦状态 */
+div.ui.checkbox input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.3) !important;
+}
+
+/* 鼠标悬停效果 */
+div.ui.checkbox input[type="checkbox"]:hover {
+    background-color: #7f8c8d !important;
+}
+
+div.ui.checkbox input[type="checkbox"]:hover:checked {
+    background-color: #16a085 !important;
+}
+
+/* 任务标签样式 - temu任务 */
+.task-tag-temu {
+    padding: 0.35rem 0.75rem;
+    background: rgba(33, 133, 208, 0.15);
+    border: 1px solid rgba(33, 133, 208, 0.3);
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #21638f;
+    margin-left: 10px;
+}
+
+/* 任务标签样式 - 财务任务 */
+.task-tag-caiwu {
+    padding: 0.35rem 0.75rem;
+    background: rgba(33, 186, 69, 0.15);
+    border: 1px solid rgba(33, 186, 69, 0.3);
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #0e8528;
+    margin-left: 10px;
+}
+
+/* 任务标签样式 - 爬虫任务 */
+.task-tag-spider {
+    padding: 0.35rem 0.75rem;
+    background: rgba(207, 162, 12, 0.15);
+    border: 1px solid rgba(177, 130, 29, 0.3);
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #f57e2e;
+    margin-left: 10px;
+}
+
+/* 现代风格日期选择器样式 */
+.modern-date-range-picker {
+    position: relative;
+    width: 100%;
+}
+
+.date-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-input-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.date-input {
+    padding-right: 40px !important;
+    background-color: #fff !important;
+    border: 1px solid rgba(34, 36, 38, 0.15) !important;
+    border-radius: 4px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.date-input:hover {
+    border-color: rgba(34, 36, 38, 0.35) !important;
+}
+
+.date-input:focus {
+    border-color: #85b7d9 !important;
+    box-shadow: 0 0 0 1px rgba(131, 194, 247, 0.35) !important;
+}
+
+.calendar-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.calendar-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.date-separator {
+    color: #666;
+    font-weight: 500;
+}
+
+.calendar-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 320px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.calendar-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #666;
+}
+
+.calendar-nav:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.calendar-body {
+    padding: 10px;
+}
+
+.calendar-weekdays {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.weekday {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: #666;
+    padding: 8px 0;
+}
+
+.calendar-days {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.calendar-day {
+    width: calc(100% / 7);
+    text-align: center;
+    padding: 8px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    color: #333;
+}
+
+.calendar-day:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.calendar-day.prev,
+.calendar-day.next {
+    color: #aaa;
+}
+
+.calendar-day.today {
+    font-weight: 600;
+    color: #2185d0;
+    background-color: rgba(33, 133, 208, 0.1);
+}
+
+.calendar-day.selected {
+    background-color: #2185d0;
+    color: #fff;
+    font-weight: 600;
+}
+
+.calendar-day.selected:hover {
+    background-color: #1a78c2;
+}
+
+/* 任务操作按钮布局 */
+.task-operation-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.task-operation-column {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.task-operation-column button {
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* 期望类目下拉框删除按钮样式 */
+/* 下拉菜单选项：隐藏 Semantic UI 的删除图标 */
+#expectedCatIdDropdown .menu .item .delete.icon {
+    display: none !important;
+}
+
+/* 选中项：隐藏我们的自定义删除按钮 */
+#expectedCatIdDropdown .ui.label .deleteBtn {
+    display: none !important;
+}

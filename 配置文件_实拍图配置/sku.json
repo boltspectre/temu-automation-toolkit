@@ -1,0 +1,187 @@
+{
+  "skus": [
+    {
+      "id": 1,
+      "name": "B",
+      "descId": 1,
+      "positionX": 580,
+      "positionY": 200,
+      "font_size": 28
+    },
+    {
+      "id": 2,
+      "name": "H",
+      "descId": 1,
+      "positionX": 580,
+      "positionY": 200,
+      "font_size": 28
+    },
+    {
+      "id": 3,
+      "name": "M",
+      "descId": 1,
+      "positionX": 580,
+      "positionY": 200,
+      "font_size": 28
+    },
+    {
+      "id": 4,
+      "name": "S",
+      "descId": 2,
+      "positionX": 590,
+      "positionY": 250,
+      "font_size": 25
+    },
+    {
+      "id": 5,
+      "name": "D",
+      "descId": 2,
+      "positionX": 590,
+      "positionY": 250,
+      "font_size": 25
+    },
+    {
+      "id": 6,
+      "name": "DDD",
+      "descId": 4,
+      "positionX": 580,
+      "positionY": 180,
+      "font_size": 25
+    },
+    {
+      "id": 7,
+      "name": "PP",
+      "descId": 4,
+      "positionX": 580,
+      "positionY": 180,
+      "font_size": 25
+    },
+    {
+      "id": 12,
+      "name": "TT",
+      "descId": 6,
+      "positionX": 580,
+      "positionY": 182,
+      "font_size": 22
+    },
+    {
+      "id": 8,
+      "name": "DH",
+      "descId": 3,
+      "positionX": 610,
+      "positionY": 235,
+      "font_size": 26
+    },
+    {
+      "id": 9,
+      "name": "DD",
+      "descId": 3,
+      "positionX": 600,
+      "positionY": 230,
+      "font_size": 28
+    },
+    {
+      "id": 10,
+      "name": "G",
+      "descId": 5,
+      "positionX": 480,
+      "positionY": 170,
+      "font_size": 20
+    },
+    {
+      "id": 11,
+      "name": "DTD",
+      "descId": 5,
+      "positionX": 302,
+      "positionY": 102,
+      "font_size": 17
+    },
+    {
+      "id": 19,
+      "name": "CA",
+      "descId": 11,
+      "positionX": 615,
+      "positionY": 145,
+      "font_size": 28
+    },
+    {
+      "id": 13,
+      "name": "RV",
+      "descId": 7,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 14,
+      "name": "CN",
+      "descId": 7,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 15,
+      "name": "MPM",
+      "descId": 7,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 16,
+      "name": "TM",
+      "descId": 8,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 17,
+      "name": "NPC",
+      "descId": 9,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 18,
+      "name": "Pro",
+      "descId": 10,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 20,
+      "name": "DMM",
+      "descId": 12,
+      "positionX": 352,
+      "positionY": 195,
+      "font_size": 17
+    },
+    {
+      "id": 21,
+      "name": "AE",
+      "descId": 5,
+      "positionX": 480,
+      "positionY": 170,
+      "font_size": 20
+    },
+    {
+      "id": 22,
+      "name": "DE",
+      "descId": 5,
+      "positionX": 480,
+      "positionY": 165,
+      "font_size": 24
+    }
+  ],
+  "skuDescList": [
+    {
+        "id": 1,
+        "oumentRepList": [{"rep_name": "123 123 SL"}],
+        "makerRepList": [{"rep_name": "123123 123 Cross-Border E-Commerce Co.,Ltd"}]
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+/* 新年主题样式 - 红金配色 */
+body {
+    background-color: #fff5f0;
+    background-image: linear-gradient(135deg, #fff5f0 0%, #ffe4e1 100%);
+}
+
+/* 左侧菜单 - 新年红 */
+.sidebar {
+    background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 50%, #8b0000 100%);
+    box-shadow: 2px 0 12px rgba(211, 47, 47, 0.5);
+}
+
+.sidebar-header {
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.sidebar-header h2 {
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.version-text {
+    color: rgba(255, 215, 0, 0.8);
+}
+
+/* 菜单项 */
+.menu-item {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.9rem 1.2rem;
+    margin: 0.4rem 0.8rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.menu-item i.icon {
+    color: #ffd700;
+}
+
+.menu-item:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    border-color: rgba(255, 215, 0, 0.4);
+    transform: translateX(5px);
+}
+
+.menu-item.active {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+    color: #8b0000;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.menu-item.active i.icon {
+    color: #8b0000;
+}
+
+.menu-badge {
+    background: #ff6b6b;
+    color: #fff;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.5);
+}
+
+/* 主内容区 */
+.main-content {
+    margin-left: 220px;
+    padding: 2rem;
+    background: transparent;
+}
+
+/* 标题 */
+.ui.header {
+    color: #b71c1c;
+    border-left: 4px solid #ffd700;
+    padding-left: 1rem;
+}
+
+.ui.header .content .sub.header {
+    color: #d32f2f;
+}
+
+/* 卡片 */
+.dashboard-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(183, 28, 28, 0.1);
+    transition: all 0.3s ease;
+    background: #fff;
+    border-top: 4px solid #d32f2f;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(183, 28, 28, 0.2);
+    border-top-color: #ffd700;
+}
+
+.dashboard-card .content .header {
+    color: #b71c1c;
+}
+
+/* 按钮 */
+.ui.primary.button {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%) !important;
+    color: #ffd700 !important;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+    transition: all 0.3s ease;
+}
+
+.ui.primary.button i.icon {
+    color: #ffd700 !important;
+}
+
+.ui.primary.button:hover {
+    background: linear-gradient(135deg, #b71c1c 0%, #8b0000 100%) !important;
+    box-shadow: 0 6px 16px rgba(211, 47, 47, 0.5);
+    transform: translateY(-2px);
+}
+
+.ui.green.button {
+    background: linear-gradient(135deg, #c41e3a 0%, #a01a2d 100%) !important;
+    color: #ffd700 !important;
+    box-shadow: 0 4px 12px rgba(196, 30, 58, 0.3);
+}
+
+.ui.green.button i.icon {
+    color: #ffd700 !important;
+}
+
+.ui.green.button:hover {
+    box-shadow: 0 6px 16px rgba(196, 30, 58, 0.5);
+}
+
+.ui.red.button {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%) !important;
+    color: #fff !important;
+}
+
+.ui.red.button i.icon {
+    color: #fff !important;
+}
+
+.ui.button {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.ui.button i.icon {
+    color: #ffd700 !important;
+}
+
+.ui.button:hover {
+    transform: translateY(-2px);
+}
+
+/* 消息提示 */
+.ui.message {
+    border-radius: 10px;
+    border-left: 4px solid #d32f2f;
+    background: linear-gradient(135deg, #fff5f0 0%, #ffe4e1 100%);
+}
+
+.ui.message.info {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border-left-color: #ffd700;
+}
+
+.ui.message.info .info.circle.icon {
+    color: #f57f17;
+}
+
+/* 分段 */
+.ui.segment {
+    border-radius: 12px;
+    border: 2px solid #ffd700;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(183, 28, 28, 0.08), 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+/* 表单 */
+.ui.form .field > label {
+    color: #b71c1c;
+    font-weight: 500;
+}
+
+.ui.dropdown {
+    border: 1px solid rgba(211, 47, 47, 0.2);
+    border-radius: 8px;
+}
+
+.ui.dropdown:hover {
+    border-color: #d32f2f;
+}
+
+.ui.input input {
+    border: 1px solid rgba(211, 47, 47, 0.2);
+    border-radius: 8px;
+}
+
+.ui.input input:focus {
+    border-color: #d32f2f;
+    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
+}
+
+/* 分隔线 */
+.ui.dividing.header {
+    border-bottom: 2px solid #ffd700;
+}
+
+/* 任务卡片 */
+.task-card {
+    border-radius: 12px;
+    border: 2px solid #ffd700;
+    box-shadow: 0 2px 8px rgba(183, 28, 28, 0.1), 0 0 10px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.task-card:hover {
+    border-color: #ffb700;
+    box-shadow: 0 4px 16px rgba(183, 28, 28, 0.15), 0 0 15px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+/* 店铺列表表格 - 保持原样 */
+
+/* 加载器 */
+.ui.loader {
+    color: #d32f2f !important;
+}
+
+.ui.loader:before {
+    border-color: rgba(211, 47, 47, 0.1);
+}
+
+.ui.loader:after {
+    border-color: #d32f2f transparent transparent;
+}
+
+/* 复选框 */
+.ui.checkbox input:checked ~ .box:before,
+.ui.checkbox input:checked ~ label:before {
+    background: #d32f2f;
+    border-color: #d32f2f;
+}
+
+/* 开关 */
+.ui.toggle.checkbox input:checked ~ .box:before,
+.ui.toggle.checkbox input:checked ~ label:before {
+    background: #d32f2f;
+}
+
+.ui.toggle.checkbox input:checked ~ .box:after,
+.ui.toggle.checkbox input:checked ~ label:after {
+    left: 1.5rem;
+}
+
+/* 分页 */
+.ui.pagination .item.active {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: #ffd700;
+}
+
+.ui.pagination .item:hover:not(.active) {
+    background: rgba(211, 47, 47, 0.1);
+    color: #d32f2f;
+}
+
+/* 徽章 */
+.ui.label.circular {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: #ffd700;
+}
+
+/* 模态框 */
+.ui.modal {
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(183, 28, 28, 0.2);
+    border: 2px solid #d32f2f;
+}
+
+.ui.modal > .header {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: #ffd700;
+    border-radius: 14px 14px 0 0;
+}
+
+/* 日志容器 */
+.logs-container {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 2px solid #d32f2f;
+}
+
+.log-entry {
+    color: #ffd700;
+    font-family: 'Consolas', 'Monaco', monospace;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(211, 47, 47, 0.2);
+}
+
+/* 滚动条 */
+.logs-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.logs-container::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 4px;
+}
+
+.logs-container::-webkit-scrollbar-thumb {
+    background: #d32f2f;
+    border-radius: 4px;
+}
+
+.logs-container::-webkit-scrollbar-thumb:hover {
+    background: #b71c1c;
+}
+
+/* Toast 提示 */
+.toast-container .toast {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(183, 28, 28, 0.2);
+    border-left: 4px solid #d32f2f;
+}
+
+.toast-container .toast.success {
+    border-left-color: #4caf50;
+}
+
+.toast-container .toast.error {
+    border-left-color: #d32f2f;
+}
+
+/* 状态指示器 */
+.status-indicator .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-indicator .status-dot.active {
+    background: #4caf50;
+    box-shadow: 0 0 8px #4caf50;
+}
+
+.status-indicator .status-dot.stopped {
+    background: #ff6b6b;
+    box-shadow: 0 0 8px #ff6b6b;
+}
+
+/* 进度条 */
+.ui.progress .bar {
+    background: linear-gradient(90deg, #d32f2f 0%, #ffd700 50%, #d32f2f 100%);
+}
+
+/* 输入框占位符 */
+.ui.input input::placeholder,
+.ui.dropdown > .default.text {
+    color: rgba(211, 47, 47, 0.5);
+}
+
+/* 小提示文字 */
+small {
+    color: #b71c1c;
+}
+
+/* 表格 */
+.ui.celled.table tr td, .ui.celled.table tr th {
+    border-color: rgba(211, 47, 47, 0.2);
+}
+
+.ui.table thead th {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    color: #ffd700;
+}
+
+.ui.table tbody tr:hover {
+    background: rgba(211, 47, 47, 0.05);
+}
+
+/* 图标颜色 */
+i.icon {
+    color: #ffd700;
+}
+
+.menu-item.active i.icon,
+.ui.header i.icon {
+    color: inherit;
+}
+
+/* 菜单项图标 */
+.menu-item i.icon {
+    width: 20px;
+    text-align: center;
+}

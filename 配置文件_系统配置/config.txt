@@ -1,0 +1,5 @@
+{
+  "kami": "any",
+  "machine_code": "3b11461f88b95183cd446ca1ca452c00",
+  "auto_login": "否"
+}

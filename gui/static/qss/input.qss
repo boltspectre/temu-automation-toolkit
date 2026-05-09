@@ -1,0 +1,60 @@
+/* 输入框样式 */
+QLineEdit {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: white;
+}
+
+QLineEdit:focus {
+    border: 1px solid #007BFF;
+    outline: none;
+}
+
+QTextEdit {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+    background-color: #F5F5F5;
+}
+
+QTextEdit:focus {
+    border: 1px solid #007BFF;
+    outline: none;
+}
+
+/* 下拉框样式 */
+QComboBox {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: white;
+    min-width: 80px;
+}
+
+QComboBox:focus {
+    border: 1px solid #007BFF;
+    outline: none;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    image: url(../../img/paixu.png);
+    width: 12px;
+    height: 12px;
+}
+
+QComboBox QAbstractItemView {
+    border: 1px solid #ddd;
+    selection-background-color: #007BFF;
+    selection-color: white;
+    background-color: white;
+    outline: none;
+}

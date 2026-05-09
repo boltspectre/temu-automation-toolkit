@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务管理 - ikun联盟</title>
+    <!-- 强制刷新JS参数 -->
+    <script>
+        // 获取当前时间戳，用于强制刷新JS和CSS
+        window.forceRefreshTimestamp = new Date().getTime();
+        // 检查是否需要强制刷新
+        window.forceRefresh = window.location.search.includes('force_refresh=1');
+    </script>
+    <!-- Semantic UI CSS -->
+    <link rel="stylesheet" id="semantic-ui-local" href="/static/vendor/css/semantic.min.css">
+    <link rel="stylesheet" id="semantic-ui-cdn" href="https://cdn.bootcdn.net/ajax/libs/semantic-ui/2.5.0/semantic.min.css" onerror="this.onerror=null;this.href='/static/vendor/css/semantic.min.css';">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" id="font-awesome-local" href="/static/vendor/css/font-awesome.min.css">
+    <link rel="stylesheet" id="font-awesome-cdn" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" onerror="this.onerror=null;this.href='/static/vendor/css/font-awesome.min.css';">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/month_picker.css">
+    <link rel="stylesheet" href="/static/css/music.css">
+    {% if Settings_theme == "新年主题" %}
+    <link rel="stylesheet" href="/static/css/newyear.css">
+    {% endif %}
+    <style>
+        .gray-option {
+            color: #999 !important;
+        }
+        
+        /* 默认主题样式 */
+        .ui.circular.label {
+            background-color: #244dd4 !important;
+            color: white !important;
+        }
+        
+        .ui.primary.button {
+            background-color: #254fda !important;
+            color: white !important;
+        }
+        
+        .ui.primary.button:hover {
+            background-color: #1e40af !important;
+        }
+        
+        /* 高分辨率优化 */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            .ui.button, .ui.card, .ui.modal {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+        
+        /* 高DPI屏幕优化 */
+        @media (min-width: 1920px) {
+            .app-layout {
+                max-width: 1920px;
+                margin: 0 auto;
+            }
+            .main-content {
+                padding: 2rem;
+            }
+        }
+        
+        /* 超高分辨率优化 */
+        @media (min-width: 2560px) {
+            .app-layout {
+                max-width: 2560px;
+                margin: 0 auto;
+            }
+            .main-content {
+                padding: 3rem;
+            }
+            .ui.grid > .column {
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+            }
+        }
+        
+        /* 菜单项URL标记样式 */
+        .menu-item {
+            position: relative;
+        }
+        
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 8px 8px 0;
+            border-color: transparent #2185d0 transparent transparent;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .menu-item:hover::after {
+            opacity: 0.7;
+        }
+        
+        /* 右键菜单提示 */
+        .menu-item[title]:hover::after {
+            opacity: 0;
+        }
+    </style>
+</head>
+
+    <!-- 立即定义 switchSection 函数，确保在 HTML onclick 事件中可用 -->
+    <script>
+        // 在最开始定义，确保 HTML 中的 onclick 可以立即使用
+        window.switchSection = function (sectionId) {
+            // 如果 DOM 还未加载完成，等待一下
+            if (!document.getElementById(sectionId)) {
+                console.warn('section元素不存在，等待DOM加载:', sectionId);
+                setTimeout(function () {
+                    window.switchSection(sectionId);
+                }, 100);
+                return;
+            }
+
+            // 执行切换逻辑（简化版，完整逻辑在 main.js 中）
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            const sectionEl = document.getElementById(sectionId);
+            if (sectionEl) {
+                sectionEl.classList.add('active');
+            }
+            const menuItem = document.querySelector('.menu-item[data-section="' + sectionId + '"]');
+            if (menuItem) {
+                menuItem.classList.add('active');
+            }
+            
+            // 更新URL标记
+            updateURLHash(sectionId);
+        };
+
+        // 兼容性：也作为普通函数定义
+        function switchSection(sectionId) {
+            window.switchSection(sectionId);
+        }
+        
+        // 更新URL标记
+        function updateURLHash(sectionId) {
+            // 检查是否有权限访问该section
+            if (!hasPermissionForSection(sectionId)) {
+                return;
+            }
+            
+            // 更新URL，添加#标记
+            const url = new URL(window.location);
+            url.hash = '#' + sectionId;
+            window.history.replaceState({}, '', url);
+        }
+        
+        // 检查是否有权限访问某个section
+        function hasPermissionForSection(sectionId) {
+            // 根据权限配置检查
+            {% if "temu" not in code_project_mode and "caiwu" not in code_project_mode %}
+            if (sectionId === 'shop-manager') {
+                return false;
+            }
+            {% endif %}
+            
+            // 其他权限检查可以在这里添加
+            return true;
+        }
+        
+        // 页面加载时检查URL标记
+        function checkURLHash() {
+            const hash = window.location.hash.substring(1); // 去掉#
+            if (hash && document.getElementById(hash)) {
+                // 有权限才切换
+                if (hasPermissionForSection(hash)) {
+                    window.switchSection(hash);
+                }
+            }
+        }
+        
+        // 添加右键菜单功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取当前URL中的token参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentToken = urlParams.get('token') || 'ikun';
+            
+            // 更新所有菜单项的title属性，包含当前token
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                const sectionId = item.getAttribute('data-section');
+                if (sectionId) {
+                    // 更新title属性
+                    item.setAttribute('title', `右键复制链接: ?token=${currentToken}#${sectionId}`);
+                }
+                
+                item.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    
+                    const sectionId = this.getAttribute('data-section');
+                    if (sectionId) {
+                        // 创建URL，包含当前token参数
+                        const url = window.location.origin + window.location.pathname + '?token=' + currentToken + '#' + sectionId;
+                        
+                        // 复制到剪贴板
+                        navigator.clipboard.writeText(url).then(() => {
+                            // 显示提示
+                            showCopyNotification('链接已复制: ' + url);
+                        }).catch(err => {
+                            // 备用方案
+                            const textArea = document.createElement('textarea');
+                            textArea.value = url;
+                            document.body.appendChild(textArea);
+                            textArea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textArea);
+                            showCopyNotification('链接已复制: ' + url);
+                        });
+                    }
+                });
+            });
+        });
+        
+        // 显示复制提示
+        function showCopyNotification(message) {
+            // 创建提示元素
+            const notification = document.createElement('div');
+            notification.className = 'ui success message copy-notification';
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+            notification.innerHTML = `
+                <i class="close icon" onclick="this.parentElement.remove()"></i>
+                <div class="header">链接已复制</div>
+                <p>${message}</p>
+            `;
+            
+            // 添加到页面
+            document.body.appendChild(notification);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <i class="tasks icon"></i>
+                    任务管理 - ikun联盟
+                </h2>
+                <div class="version-text">...</div>
+            </div>
+            <div class="menu-items">
+                <div class="menu-item active" data-section="dashboard" onclick="switchSection('dashboard')" title="右键复制链接">
+                    <i class="paper plane icon"></i>
+                    <span>提交任务</span>
+                    <a href="#dashboard" class="section-link" style="display:none;"></a>
+                </div>
+                <div class="menu-item" data-section="task-manager" onclick="switchSection('task-manager')" title="右键复制链接">
+                    <i class="tasks icon"></i>
+                    <span>任务列表</span>
+                    <span class="menu-badge" id="taskCount">0</span>
+                    <a href="#task-manager" class="section-link" style="display:none;"></a>
+                </div>
+                {% if "temu" in code_project_mode or "caiwu" in code_project_mode %}
+                <div class="menu-item" data-section="shop-manager" onclick="switchSection('shop-manager')" title="右键复制链接">
+                    <i class="building icon"></i>
+                    <span>店铺管理</span>
+                    <a href="#shop-manager" class="section-link" style="display:none;"></a>
+                </div>
+                {% endif %}
+                <!-- 注释掉日志监控
+                <div class="menu-item" data-section="log-viewer" onclick="switchSection('log-viewer')" title="右键复制链接">
+                    <i class="terminal icon"></i>
+                    <span>日志监控</span>
+                    <a href="#log-viewer" class="section-link" style="display:none;"></a>
+                </div>
+                -->
+                <div class="menu-item" data-section="server-control" onclick="switchSection('server-control')" title="右键复制链接">
+                    <i class="server icon"></i>
+                    <span>服务控制</span>
+                    <a href="#server-control" class="section-link" style="display:none;"></a>
+                </div>
+                <div class="menu-item" data-section="settings" onclick="switchSection('settings')" title="右键复制链接">
+                    <i class="cog icon"></i>
+                    <span>系统设置</span>
+                    <a href="#settings" class="section-link" style="display:none;"></a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 右侧主体内容 -->
+        <main class="main-content">
+            <!-- 控制面板 -->
+            <div id="dashboard" class="section active">
+                <h1 class="ui header">
+                    <i class="paper plane icon"></i>
+                    <div class="content">
+                        提交任务
+                        <div class="sub header">快速提交各类任务</div>
+                    </div>
+                </h1>
+
+                <div class="ui message info">
+                    <i class="info circle icon"></i>
+                    <div class="content">
+                        <div class="header">版本 ...</div>
+                        <p>当前为内测版本，仅测试核心功能，有问题及时反馈</p>
+                    </div>
+                </div>
+
+                <h2 class="ui dividing header">快速操作</h2>
+                <div class="ui four column grid">
+
+                    {% if "temu" in code_project_mode %}
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">1</span>
+                                    上传实拍图任务
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>批量执行上传合规信息、实拍图、标签图，支持自定义上传固定图片</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('upload_real_pic')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">2</span>
+                                    核价任务
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>上新自动核价，批量处理价格调整，支持理想价设置</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('modify_price')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">3</span>
+                                    商品价格申报
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>商品价格申报（原调价管理）不调整价格申报，原因支持自定义，无论多少订单，秒！秒！秒！</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('adjust_price')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">4</span>
+                                    开通JIT维护库存
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>批量管理JIT库存，支持指定SPU列表和日期范围设置</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('jit_govern')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">5</span>
+                                    报活动任务
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>自动申报活动，支持限时秒杀、官方大促、清仓甩卖等所有活动类型</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('apply_activity')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">6</span>
+                                    批量修改期望到货地点
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>批量修改商品期望到货地点，支持类目筛选与页数限制</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('expected_goods_place')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">7</span>
+                                    批量加入发货台
+                                    <span class="task-tag-temu">Temu</span>
+                                </div>
+                                <div class="description">
+                                    <p>自动翻页查询备货单，批量加入发货台，失败自动上传实拍图后重试（最多5轮）</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('purchase_delivery')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if "caiwu" in code_project_mode %}
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">1</span>
+                                    生成财务报表全流程
+                                    <span class="task-tag-caiwu">财务</span>
+                                </div>
+                                <div class="description">
+                                    <p>生成财务报表全流程</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('financial_full')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">2</span>
+                                    导出所选月份账单
+                                    <span class="task-tag-caiwu">财务</span>
+                                </div>
+                                <div class="description">
+                                    <p>导出指定月份的账单明细</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('financial_export')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">3</span>
+                                    融合所选月份账单
+                                    <span class="task-tag-caiwu">财务</span>
+                                </div>
+                                <div class="description">
+                                    <p>将导出的账单进行融合处理</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('financial_merge')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">4</span>
+                                    记录所需列到总表
+                                    <span class="task-tag-caiwu">财务</span>
+                                </div>
+                                <div class="description">
+                                    <p>提取关键列记录到总汇总表</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('financial_record')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">5</span>
+                                    计算并生成财务报表
+                                    <span class="task-tag-caiwu">财务</span>
+                                </div>
+                                <div class="description">
+                                    <p>计算并生成指定月份的财务报表</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid"
+                                    onclick="openTaskModal('financial_calculate')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">6</span>
+                                    生成SKU汇总表
+                                    <span class="task-tag-caiwu">财务</span>
+                                </div>
+                                <div class="description">
+                                    <p>融合多个月份的SKU表生成汇总表</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid"
+                                    onclick="openTaskModal('sku_summary')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if "spider" in code_project_mode %}
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">1</span>
+                                    虎扑帖子列表采集
+                                    <span class="task-tag-spider">爬虫</span>
+                                </div>
+                                <div class="description">
+                                    <p>采集虎扑帖子列表数据</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('hupu_post_list')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">2</span>
+                                    虎扑帖子详情采集
+                                    <span class="task-tag-spider">爬虫</span>
+                                </div>
+                                <div class="description">
+                                    <p>采集虎扑帖子详情数据</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('hupu_detail_list')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="ui card dashboard-card">
+                            <div class="content">
+                                <div class="header">
+                                    <span class="ui circular label">3</span>
+                                    虎扑评分采集
+                                    <span class="task-tag-spider">爬虫</span>
+                                </div>
+                                <div class="description">
+                                    <p>采集虎扑评分数据</p>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <button class="ui primary button fluid" onclick="openTaskModal('hupu_score_list')">
+                                    <i class="play icon"></i> 启动任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 任务管理 -->
+            <div id="task-manager" class="section">
+                <h1 class="ui header">
+                    <i class="tasks icon"></i>
+                    <div class="content">
+                        任务列表
+                        <div class="sub header">查看和管理所有任务</div>
+                    </div>
+                </h1>
+                <div class="ui segment">
+                    <!-- 筛选条件 -->
+                    <div class="task-filter-section">
+                        <div class="ui five column grid">
+                            <div class="column">
+                                <label><i class="filter icon"></i> 任务状态</label>
+                                <select class="ui fluid dropdown" id="filterTaskStatus">
+                                    <option value="" class="gray-option">全部</option>
+                                    <option value="pending">待执行</option>
+                                    <option value="running">执行中</option>
+                                    <option value="验证码">验证码</option>
+                                    <option value="success">执行成功</option>
+                                    <option value="failed">执行失败</option>
+                                    <option value="timeout">执行超时</option>
+                                </select>
+                            </div>
+                            {% if "temu" in code_project_mode or "caiwu" in code_project_mode %}
+                            <div class="column">
+                                <label><i class="building icon"></i> 店铺缩写</label>
+                                <select class="ui fluid dropdown" id="filterShopAbbr">
+                                    <option value="" class="gray-option">全部</option>
+                                    <!-- 动态加载店铺选项 -->
+                                </select>
+                            </div>
+                            {% endif %}
+                            <div class="column">
+                                <label><i class="list icon"></i> 任务类型</label>
+                                <select class="ui fluid dropdown" id="filterTaskType">
+                                    <option value="" class="gray-option">全部</option>
+                                    {% if "spider" in code_project_mode %}
+                                    <option value="hupu_post_list">虎扑帖子列表</option>
+                                    <option value="hupu_detail_list">虎扑帖子详情</option>
+                                    <option value="hupu_score_list">虎扑评分</option>
+                                    {% endif %}
+                                    {% if "temu" in code_project_mode %}
+                                    <option value="upload_real_pic">上传实拍图任务</option>
+                                    <option value="modify_price">核价任务</option>
+                                    <option value="jit_govern">开通JIT维护库存</option>
+                                    <option value="adjust_price">调价管理</option>
+                                    <option value="apply_activity">报活动任务</option>
+                                    <option value="expected_goods_place">批量修改期望到货地点</option>
+                                    <option value="purchase_delivery">批量加入发货台</option>
+                                    {% endif %}
+                                    {% if "caiwu" in code_project_mode %}
+                                    <option value="financial_full">生成财务报表全流程</option>
+                                    <option value="financial_export">导出月份账单</option>
+                                    <option value="financial_merge">融合月份账单</option>
+                                    <option value="financial_record">记录到总表</option>
+                                    <option value="financial_calculate">计算并生成财务报表</option>
+                                    <option value="sku_summary">生成SKU汇总表</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="column">
+                                <label><i class="shield icon"></i> 守护任务</label>
+                                <select class="ui fluid dropdown" id="filterMaintainTask">
+                                    <option value="" class="gray-option">全部</option>
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                            </div>
+                            <div class="column">
+                                <label><i class="clock icon"></i> 定时任务</label>
+                                <select class="ui fluid dropdown" id="filterScheduledTask">
+                                    <option value="" class="gray-option">全部</option>
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="task-filter-actions"
+                            style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <button class="ui warning button" onclick="cleanAllTaskLogs()" title="一键清空所有任务日志">
+                                    <i class="trash icon"></i> 一键清空日志
+                                </button>
+                                <button class="ui red button" onclick="clearAllTasks()" title="删除所有任务（包含子线程任务）">
+                                    <i class="trash alternate icon"></i> 清空所有任务
+                                </button>
+                                <div class="ui toggle checkbox" id="searchAllTasksCheckbox">
+                                    <input type="checkbox" id="searchAllTasks" tabindex="0">
+                                    <label>显示子线程任务</label>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div id="batchActions" style="display: flex; align-items: center; gap: 10px;">
+                                    <button class="ui primary button" onclick="showBatchActionsModal()" title="批量操作">
+                                        <i class="tasks icon"></i> 批量操作
+                                    </button>
+                                </div>
+                                <button class="ui primary button" onclick="searchTasks()">
+                                    <i class="search icon"></i> 搜索
+                                </button>
+                                <button class="ui primary button" onclick="loadTasks()">
+                                    <i class="refresh icon"></i> 刷新
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <div id="tasksContainer">
+                            <div class="ui active centered inline loader"></div>
+                            <p style="text-align: center; margin-top: 10px;">正在加载任务列表...</p>
+                        </div>
+                        <div id="taskPagination" style="margin-top: 20px; text-align: center;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 店铺管理 -->
+            <div id="shop-manager" class="section">
+                <h1 class="ui header">
+                    <i class="building icon"></i>
+                    <div class="content">
+                        店铺管理
+                        <div class="sub header">管理和配置店铺信息</div>
+                    </div>
+                </h1>
+                <div class="ui segment">
+                    <div class="ui grid">
+                        <div class="twelve wide column">
+                            <div class="ui fluid action input">
+                                <input type="text" id="shopSearchInput" placeholder="搜索店铺名称/缩写/Browser ID">
+                                <button class="ui primary button" onclick="searchShops()">
+                                    <i class="search icon"></i> 搜索
+                                </button>
+                            </div>
+                        </div>
+                        <div class="four wide column">
+                            <button class="ui green button fluid" onclick="openAddShopModalNew()">
+                                <i class="plus icon"></i> 添加新店铺
+                            </button>
+                        </div>
+                    </div>
+                    <div id="shopList" style="margin-top: 20px;"></div>
+                    <div id="shopPagination" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+
+            <!-- 日志监控 -->
+            <div id="log-viewer" class="section">
+                <h1 class="ui header">
+                    <i class="terminal icon"></i>
+                    <div class="content">
+                        日志监控
+                        <div class="sub header">获取监控任务执行日志</div>
+                    </div>
+                    <!--                    <div class="status-indicator" id="logStatus" style="margin-left: auto;">-->
+                    <!--                        <span class="status-dot stopped"></span>-->
+                    <!--                        <span>未连接</span>-->
+                    <!--                    </div>-->
+                </h1>
+                <div class="ui segment">
+                    <div class="ui form" style="margin-bottom: 15px;">
+                        <div class="three fields">
+                            <div class="field">
+                                <label>获取最新行数（留空=所有日志）</label>
+                                <div class="ui input">
+                                    <input type="number" id="logMaxLines" placeholder="例如：100" min="1">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>查询关键词（留空=不过滤）</label>
+                                <div class="ui input">
+                                    <input type="text" id="logKeyword" placeholder="输入关键词">
+                                </div>
+                            </div>
+                            <div class="field" style="display: flex; align-items: flex-end;">
+                                <button class="ui primary button" onclick="connectLogs()" id="connectBtn"
+                                    style="width: 100%;">
+                                    <i class="plug icon"></i> 获取日志
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui buttons">
+                        <button class="ui button" onclick="clearLogs()">
+                            <i class="trash icon"></i> 清空日志
+                        </button>
+                        <button class="ui button" onclick="exportLogs()">
+                            <i class="download icon"></i> 导出日志
+                        </button>
+                    </div>
+                    <div class="logs-container" id="logsContainer" style="margin-top: 20px;">
+                        <div class="log-entry">
+                            <!--                            <span class="log-time">[12-20 14:30:00]</span>-->
+                            <!--                            <span class="log-level info">INFO</span>-->
+                            <span>点击"获取日志"立即获取最新日志</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 服务控制 -->
+            <div id="server-control" class="section">
+                <h1 class="ui header">
+                    <i class="server icon"></i>
+                    <div class="content">
+                        服务控制
+                        <div class="sub header">管理和控制服务器状态</div>
+                    </div>
+                </h1>
+                <div class="ui segment">
+                    <h3 class="ui dividing header">
+                        <i class="server icon"></i> 服务器状态
+                    </h3>
+                    <div id="serverStatus">
+                        <div class="ui active centered inline loader"></div>
+                        <p style="text-align: center; margin-top: 10px;">正在检测服务器状态...</p>
+                    </div>
+                </div>
+
+                <div class="ui segment">
+                    <h3 class="ui dividing header">
+                        <i class="cogs icon"></i> 进程管理
+                    </h3>
+                    <div id="processList">
+                        <p>暂无进程信息</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统设置 -->
+            <div id="settings" class="section">
+                <h1 class="ui header">
+                    <i class="cog icon"></i>
+                    <div class="content">
+                        系统设置
+                        <div class="sub header">配置系统参数</div>
+                    </div>
+                </h1>
+
+                <!-- 服务器设置 -->
+                <div class="ui segment">
+                    <h2 class="ui dividing header">服务器设置</h2>
+                    <form class="ui form">
+                        <div class="two fields">
+                            <div class="field">
+                                <label>内网IP</label>
+                                <div class="ui left icon input">
+                                    <i class="server icon"></i>
+                                    <input type="text" id="internalIp" placeholder="192.168.0.1">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>公网IP</label>
+                                <div class="ui left icon input">
+                                    <i class="globe icon"></i>
+                                    <input type="text" id="externalIp" placeholder="localhost">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="three fields">
+                            <div class="field">
+                                <label>端口</label>
+                                <div class="ui left icon input">
+                                    <i class="plug icon"></i>
+                                    <input type="text" id="port" placeholder="1234">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>进程数</label>
+                                <div class="ui selection dropdown">
+                                    <input type="hidden" id="process">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">1</div>
+                                    <div class="menu">
+                                        <div class="item" data-value="1">1</div>
+                                        <div class="item" data-value="2">2</div>
+                                        <div class="item" data-value="4">4</div>
+                                        <div class="item" data-value="8">8</div>
+                                        <div class="item" data-value="16">16</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Token</label>
+                                <div class="ui left icon input">
+                                    <i class="key icon"></i>
+                                    <input type="text" id="token" placeholder="输入认证token">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>启用认证</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="auth_enabled">
+                                    <label></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="three fields">
+                            <div class="field">
+                                <label>线程模式</label>
+                                <div class="ui selection dropdown">
+                                    <input type="hidden" id="thread_mode">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">线程池</div>
+                                    <div class="menu">
+                                        <div class="item" data-value="0">线程池</div>
+                                        <div class="item" data-value="1">动态线程池</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>运行模式</label>
+                                <div class="ui selection dropdown">
+                                    <input type="hidden" id="mode">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">自动</div>
+                                    <div class="menu">
+                                        <div class="item" data-value="0">自动</div>
+                                        <div class="item" data-value="1">待处理</div>
+                                        <div class="item" data-value="2">队伍中</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>重启间隔</label>
+                                <div class="ui selection dropdown">
+                                    <input type="hidden" id="restart">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">不重启</div>
+                                    <div class="menu">
+                                        <div class="item" data-value="不重启">不重启</div>
+                                        <div class="item" data-value="0.5小时">0.5小时</div>
+                                        <div class="item" data-value="1小时">1小时</div>
+                                        <div class="item" data-value="2小时">2小时</div>
+                                        <div class="item" data-value="4小时">4小时</div>
+                                        <div class="item" data-value="6小时">6小时</div>
+                                        <div class="item" data-value="12小时">12小时</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 日志管理 -->
+                <div class="ui segment">
+                    <h2 class="ui dividing header">日志管理</h2>
+                    <form class="ui form">
+                        <div class="two fields">
+                            <div class="field">
+                                <label><i class="trash icon"></i> 启用自动清理</label>
+                                <div class="ui toggle checkbox" id="autoCleanLogEnabled">
+                                    <input type="checkbox" id="autoCleanLogEnabledCheckbox">
+                                    <label>启用任务日志自动清理</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label><i class="database icon"></i> 日志字符阈值</label>
+                                <input type="number" id="logCharThreshold" min="10000" placeholder="例如：100000">
+                                <small>日志超过此字符数时自动清理</small>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label><i class="cut icon"></i> 保留比例</label>
+                            <select class="ui dropdown" id="logKeepRatio">
+                                <option value="0.1">1/10 (保留10%)</option>
+                                <option value="0.2">1/5 (保留20%)</option>
+                                <option value="0.25">1/4 (保留25%)</option>
+                                <option value="0.5">1/2 (保留50%)</option>
+                            </select>
+                            <small>清理时保留日志的比例</small>
+                        </div>
+
+                        <div class="ui divider"></div>
+
+                    </form>
+                </div>
+
+                <!-- 特效效果 -->
+                <div class="ui segment">
+                    <h2 class="ui dividing header">特效效果</h2>
+                    <form class="ui form">
+                        <div class="three fields">
+                            <div class="field">
+                                <label><i class="snowflake icon"></i> 樱花特效</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="yinghuaEffectEnabledCheckbox">
+                                    <label>启用樱花飘落效果</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label><i class="circle icon"></i> 气泡特效</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="qipaoEffectEnabledCheckbox">
+                                    <label>启用气泡上升效果</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label><i class="rose icon"></i> 玫瑰特效</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="roseEffectEnabledCheckbox">
+                                    <label>启用玫瑰花瓣效果</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="three fields">
+                            <div class="field">
+                                <label><i class="paint brush icon"></i> 主题选择</label>
+                                <select class="ui dropdown" id="themeSelect">
+                                    <option value="默认主题">默认主题</option>
+                                    <option value="新年主题">新年主题</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label><i class="cloud icon"></i> CDN加载模式</label>
+                                <select class="ui dropdown" id="cdn_mode">
+                                    <option value="本地">本地</option>
+                                    <option value="云端" selected>云端</option>
+                                    <option value="混合">混合</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 背景音乐 -->
+                <div class="ui segment">
+                    <h2 class="ui dividing header">背景音乐</h2>
+                    <form class="ui form">
+                        <div class="three fields">
+                            <div class="field">
+                                <label><i class="music icon"></i> 背景音乐</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="backgroundMusicEnabledCheckbox">
+                                    <label>启用背景音乐</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label><i class="play icon"></i> 自动播放</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="backgroundMusicAutoplayCheckbox">
+                                    <label>自动播放背景音乐</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label><i class="headphones icon"></i> 播放本地音乐</label>
+                                <div class="ui toggle checkbox">
+                                    <input type="checkbox" id="backgroundMusicLocalCheckbox">
+                                    <label>从本地music文件夹随机播放</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="three fields">
+                            <div class="field">
+                                <label><i class="linkify icon"></i> 音乐链接</label>
+                                <div class="ui action input">
+                                    <input type="text" id="backgroundMusicUrl" placeholder="输入背景音乐URL">
+                                </div>
+                            </div>
+                              <div class="field">
+                                <label><i class="music icon"></i> 音乐链接工具</label>
+                                <button type="button" class="ui pending button" onclick="openMusicLinkTool()" title="在新标签页打开音乐链接转换工具">
+                                    <i class="music icon"></i> 音乐链接工具
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="ui divider"></div>
+
+                <div class="ui center aligned basic segment">
+                    <div style="display: flex; gap: 20px; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto;">
+                        <button type="button" class="ui orange button" onclick="forceRefreshResources()" style="flex: 1;" title="强制刷新所有CSS和JS文件，解决缓存问题">
+                            <i class="refresh icon"></i> 强制刷新资源
+                        </button>
+                        <button type="button" class="ui primary button" onclick="saveSettings()" style="flex: 1;">
+                            <i class="save icon"></i> 保存设置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 任务配置模态框 -->
+    <div class="ui modal" id="taskModal">
+        <i class="close icon"></i>
+        <div class="header" id="modalTitle">任务配置</div>
+        <div class="content" id="modalBody">
+            <!-- 动态加载内容 -->
+        </div>
+        <div class="actions">
+            <div class="ui cancel button" onclick="closeModal()">取消</div>
+            <div class="ui approve primary button" id="taskModalSubmitBtn" onclick="submitTask()">提交任务</div>
+        </div>
+    </div>
+
+    <script>
+        // 监听模态框打开事件，更新按钮文本
+        $(document).ready(function() {
+            $('#taskModal').on('show', function() {
+                const submitBtn = document.getElementById('taskModalSubmitBtn');
+                if (currentModalData && currentModalData.isEdit) {
+                    submitBtn.textContent = '修改';
+                } else {
+                    submitBtn.textContent = '提交任务';
+                }
+            });
+        });
+    </script>
+
+    <!-- 定时任务配置模态框 -->
+    <div class="ui modal" id="scheduledTaskModal">
+        <i class="close icon"></i>
+        <div class="header"><i class="clock icon"></i> 定时任务配置</div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <label><i class="calendar icon"></i> 定时类型</label>
+                    <select class="ui fluid dropdown" id="scheduleType">
+                        <option value="once">定时执行（每天固定时间）</option>
+                        <option value="interval">间隔执行（每隔N分钟）</option>
+                    </select>
+                </div>
+                <div class="field" id="scheduleTimeField">
+                    <label><i class="clock icon"></i> 执行时间</label>
+                    <input type="time" id="scheduleTime" value="">
+                    <small>选择任务执行的具体时间（24小时制，每日定时执行）</small>
+                </div>
+                <div class="field" id="scheduleIntervalField" style="display: none;">
+                    <label><i class="hourglass icon"></i> 执行间隔（分钟）</label>
+                    <input type="number" id="scheduleInterval" min="1" value="30">
+                    <small>设置任务执行的间隔时间（分钟）</small>
+                </div>
+                <div class="field">
+                    <label><i class="play icon"></i> 立即执行</label>
+                    <div class="ui toggle checkbox">
+                        <input type="checkbox" id="executeImmediately">
+                        <label>勾选后立即执行一次，然后再按照定时设置执行</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <div class="ui cancel button" onclick="closeScheduledTaskModal()">取消</div>
+            <div class="ui approve primary button" onclick="submitScheduledTask()">
+                <i class="save icon"></i> 保存配置
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加新店铺模态框 -->
+    <div class="ui modal" id="addShopModal">
+        <i class="close icon"></i>
+        <div class="header">添加新店铺</div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <label><i class="desktop icon"></i> 浏览器ID</label>
+                    <input type="text" id="newShopBrowserId" placeholder="请输入浏览器ID（选填）">
+                    <small style="color: #999; margin-top: 5px; display: block;">用于比特浏览器登录</small>
+                </div>
+                <div class="field">
+                    <label><i class="shop icon"></i> 店铺名称</label>
+                    <input type="text" id="newShopName" placeholder="请输入店铺名称（选填）">
+                </div>
+                <div class="field">
+                    <label><i class="tag icon"></i> 店铺缩写</label>
+                    <input type="text" id="newShopAbbr" placeholder="请输入店铺缩写（选填）">
+                </div>
+                <div class="field">
+                    <label><i class="phone icon"></i> 手机号</label>
+                    <input type="text" id="newShopPhone" placeholder="请输入手机号（选填）">
+                </div>
+                <div class="field">
+                    <label><i class="lock icon"></i> 密码</label>
+                    <input type="password" id="newShopPassword" placeholder="请输入密码（选填）">
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <div class="ui cancel button" onclick="closeAddShopModal()">取消</div>
+            <div class="ui approve primary button" onclick="submitNewShop()">
+                <i class="save icon"></i> 添加
+            </div>
+        </div>
+    </div>
+
+    <!-- 店铺连接配置弹窗（与提交任务配置逻辑一致） -->
+    <div class="ui modal" id="connectConfigModal">
+        <i class="close icon"></i>
+        <div class="header"><i class="linkify icon"></i> 连接配置</div>
+        <div class="content">
+            <p class="ui message info" id="connectConfigShopInfo">店铺：</p>
+            <input type="hidden" id="connectConfigUid">
+            <div class="form-group">
+                <label><i class="fas fa-user-secret"></i> 登录类型</label>
+                <select class="ui fluid dropdown" id="connectConfigLoginType">
+                    <option value="ikun">Ikun浏览器</option>
+                    <option value="bit">比特浏览器</option>
+                </select>
+                <small>选择登录使用的浏览器类型，默认使用ikun浏览器</small>
+            </div>
+            <div class="form-group ikun-persist-browser-group" id="connectConfigIkunPersistBrowserGroup"
+                style="display: none;">
+                <label><i class="fas fa-eye"></i> 是否持续显示Ikun浏览器</label>
+                <div class="ui toggle checkbox" id="connectConfigIkunPersistBrowserCheckbox">
+                    <input type="checkbox" id="connectConfigIkunPersistBrowser">
+                    <label>勾选后连接期间Ikun浏览器将持续显示（会强制重新登录）</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-eye"></i> 显示浏览器登录过程</label>
+                <div class="ui toggle checkbox" id="connectConfigHeadlessCheckbox">
+                    <input type="checkbox" id="connectConfigHeadless">
+                    <label>显示浏览器</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-redo"></i>强制重新登录</label>
+                <div class="ui toggle checkbox" id="connectConfigReloadCookiesCheckbox">
+                    <input type="checkbox" id="connectConfigReloadCookies">
+                    <label>连接时强制重新登录以刷新Cookies</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-desktop"></i> 窗口大小</label>
+                <select class="ui fluid dropdown" id="connectConfigWindowSize">
+                    <option value="[1920,1080]">1920 x 1080</option>
+                    <option value="[2560,1440]">2560 x 1440</option>
+                    <option value="[3840,2160]">3840 x 2160</option>
+                    <option value="[1366,768]">1366 x 768</option>
+                    <option value="[1920,1200]">1920 x 1200</option>
+                </select>
+                <small>选择浏览器窗口大小</small>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui cancel button">取消</div>
+            <div class="ui button" id="connectConfigSaveBtn" onclick="saveConnectConfig()">
+                <i class="save icon"></i> 保存配置
+            </div>
+            <div class="ui approve primary button" id="connectConfigConfirmBtn" onclick="submitConnectConfig()">
+                <i class="linkify icon"></i> 确认连接
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改店铺模态框 -->
+    <div class="ui modal" id="modifyShopModal">
+        <i class="close icon"></i>
+        <div class="header">修改店铺信息</div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <label><i class="desktop icon"></i> 浏览器ID</label>
+                    <input type="text" id="modifyShopBrowserId" placeholder="请输入浏览器ID">
+                    <small style="color: #999; margin-top: 5px; display: block;">用于比特浏览器登录</small>
+                </div>
+                <!-- 隐藏字段：用于存储当前编辑店铺的UID -->
+                <input type="hidden" id="modifyShopUid">
+                <div class="field">
+                    <label><i class="store icon"></i> 店铺名称</label>
+                    <input type="text" id="modifyShopName" placeholder="请输入店铺名称">
+                </div>
+                <div class="field">
+                    <label><i class="tag icon"></i> 店铺缩写</label>
+                    <input type="text" id="modifyShopAbbr" placeholder="请输入店铺缩写">
+                </div>
+                <div class="field">
+                    <label><i class="phone icon"></i> 手机号</label>
+                    <input type="text" id="modifyShopPhone" placeholder="请输入手机号（选填）">
+                </div>
+                <div class="field">
+                    <label><i class="lock icon"></i> 密码</label>
+                    <input type="text" id="modifyShopPassword" placeholder="请输入密码（选填）">
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <div class="ui cancel button" onclick="closeModifyShopModal()">取消</div>
+            <div class="ui approve primary button" onclick="submitModifyShop()">
+                <i class="save icon"></i> 保存
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (Semantic UI 依赖) - 始终加载本地版本 -->
+    <script src="/static/vendor/js/jquery.min.js"></script>
+    <!-- Semantic UI JS - 始终加载本地版本 -->
+    <script src="/static/vendor/js/semantic.min.js"></script>
+    <!-- 自定义 Toast 提示组件 -->
+    <script src="/static/js/toast.js"></script>
+    <!-- 引入通用组件 -->
+    <script src="/static/js/task_common.js"></script>
+    <!-- 优先引入本地js -->
+    <script src="/static/js/main.js"></script>
+    <!-- 音乐播放器 -->
+    <script src="/static/js/music.js"></script>
+
+    <script>
+        // 传递背景音乐设置到前端
+        window.backgroundMusicSettings = {
+            enabled: "{{ background_music_enabled }}",
+            autoplay: "{{ background_music_autoplay }}",
+            url: "{{ background_music_url }}",
+            local: "{{ background_music_local }}"
+        };
+    </script>
+
+    {% if Settings_rose_html == "是"%}
+        <script src="/static/js/rose.js"></script>
+    {% endif %}
+
+    {% if Settings_yinghua_html == "是"%}
+        <script src="/static/js/yinghua.js"></script>
+    {% endif %}
+
+    {% if Settings_qipao_html == "是"%}
+    <script>
+        // 气泡效果初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initBubbleEffects();
+            loadCDNResources();
+        });
+    </script>
+    {% endif %}
+
+    {% if Settings_qipao_html != "是"%}
+    <script>
+        // CDN资源加载
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCDNResources();
+        });
+    </script>
+    {% endif %}
+
+    <script>
+        // CDN资源加载函数
+        async function loadCDNResources() {
+            try {
+                // 使用模板变量获取CDN配置
+                const cdnMode = '{{ Settings_cdn_mode or "云端" }}';
+
+                // CDN资源URL
+                const semanticUICSS = 'https://cdn.bootcdn.net/ajax/libs/semantic-ui/2.5.0/semantic.min.css';
+                const fontAwesomeCSS = 'https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                const jqueryJS = 'https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js';
+                const semanticUIJS = 'https://cdn.bootcdn.net/ajax/libs/semantic-ui/2.5.0/semantic.min.js';
+
+                // 根据CDN模式设置资源
+                if (cdnMode === '本地') {
+                    // 本地模式：只使用本地资源，禁用CDN资源
+                    console.log('CDN模式: 本地');
+                    // 启用本地CSS资源
+                    document.getElementById('semantic-ui-local').disabled = false;
+                    document.getElementById('font-awesome-local').disabled = false;
+                    // 禁用CDN CSS资源
+                    document.getElementById('semantic-ui-cdn').disabled = true;
+                    document.getElementById('font-awesome-cdn').disabled = true;
+                } else if (cdnMode === '云端') {
+                    // 云端模式：只加载CDN资源，禁用本地资源
+                    console.log('CDN模式: 云端');
+                    // 禁用本地CSS资源
+                    document.getElementById('semantic-ui-local').disabled = true;
+                    document.getElementById('font-awesome-local').disabled = true;
+                    // 启用CDN CSS资源
+                    document.getElementById('semantic-ui-cdn').disabled = false;
+                    document.getElementById('font-awesome-cdn').disabled = false;
+                    // 设置CDN资源URL
+                    document.getElementById('semantic-ui-cdn').href = semanticUICSS;
+                    document.getElementById('font-awesome-cdn').href = fontAwesomeCSS;
+                } else {
+                    // 混合模式：同时加载本地和CDN资源，CDN优先
+                    console.log('CDN模式: 混合');
+                    // 启用所有CSS资源
+                    document.getElementById('semantic-ui-local').disabled = false;
+                    document.getElementById('font-awesome-local').disabled = false;
+                    document.getElementById('semantic-ui-cdn').disabled = false;
+                    document.getElementById('font-awesome-cdn').disabled = false;
+                    // 设置CDN资源URL
+                    document.getElementById('semantic-ui-cdn').href = semanticUICSS;
+                    document.getElementById('font-awesome-cdn').href = fontAwesomeCSS;
+
+                    // 检查CDN资源加载状态
+                    setTimeout(() => {
+                        checkCDNResources();
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('加载CDN配置失败:', error);
+                // 出错时使用混合模式
+                document.getElementById('semantic-ui-cdn').href = 'https://cdn.bootcdn.net/ajax/libs/semantic-ui/2.5.0/semantic.min.css';
+                document.getElementById('font-awesome-cdn').href = 'https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+            }
+        }
+
+        // 检查CDN资源加载状态
+        function checkCDNResources() {
+            try {
+                const cdnResources = [
+                    { id: 'semantic-ui-cdn', type: 'css', name: 'Semantic UI CSS' },
+                    { id: 'font-awesome-cdn', type: 'css', name: 'Font Awesome CSS' }
+                ];
+
+                let loadedCount = 0;
+                let totalCount = cdnResources.length;
+
+                cdnResources.forEach(resource => {
+                    const element = document.getElementById(resource.id);
+                    if (!element) {
+                        console.warn(`CDN资源 ${resource.name} 未找到`);
+                        return;
+                    }
+
+                    if (resource.type === 'css') {
+                        // 检查CSS是否加载成功
+                        if (element.sheet || element.styleSheet) {
+                            loadedCount++;
+                            console.log(`✓ ${resource.name} CDN 加载成功`);
+                        } else {
+                            console.warn(`✗ ${resource.name} CDN 加载失败，使用本地资源`);
+                        }
+                    }
+                });
+
+                console.log(`CDN资源加载完成: ${loadedCount}/${totalCount}`);
+
+                // 如果CDN资源加载失败，可以在这里添加额外的处理逻辑
+                if (loadedCount < totalCount) {
+                    console.warn('部分CDN资源加载失败，已自动切换到本地资源');
+                }
+            } catch (error) {
+                console.error('检查CDN资源状态失败:', error);
+            }
+        }
+    </script>
+
+    <!-- 批量操作弹窗 -->
+    <div class="ui modal" id="batchActionsModal">
+        <i class="close icon"></i>
+        <div class="header">
+            <i class="tasks icon"></i> 批量操作
+        </div>
+        <div class="content">
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="ui primary button" onclick="batchRerunTasks()" title="批量重跑选中的任务" style="flex: 1;">
+                        <i class="play icon"></i> 批量重跑
+                    </button>
+                    <button class="ui button" onclick="batchStopTasks()" title="批量停止选中的任务"
+                        style="background-color: #faa64b; color: white; flex: 1;">
+                        <i class="stop icon"></i> 批量停止
+                    </button>
+                    <button class="ui red button" onclick="batchDeleteTasks()" title="批量删除选中的任务" style="flex: 1;">
+                        <i class="trash icon"></i> 批量删除
+                    </button>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="ui teal button" onclick="batchAddScheduledTasks()" title="为选中的任务添加定时任务" style="flex: 1;">
+                        <i class="clock icon"></i> 添加定时任务
+                    </button>
+                    <button class="ui orange button" onclick="batchRemoveScheduledTasks()" title="关闭选中的任务的定时任务" style="flex: 1;">
+                        <i class="clock outline icon"></i> 关闭定时任务
+                    </button>
+                    <button class="ui red button" onclick="clearTaskLogs()" title="清空选中任务的日志" style="flex: 1;">
+                        <i class="trash icon"></i> 删除任务日志
+                    </button>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="ui green button" onclick="addMaintainTasks()" title="将选中的任务设为守护任务" style="flex: 1;">
+                        <i class="shield icon"></i> 添加守护任务
+                    </button>
+                    <button class="ui yellow button" onclick="delMaintainTasks()" title="取消选中的任务的守护状态" style="flex: 1;">
+                        <i class="shield alternate icon"></i> 删除守护任务
+                    </button>
+                    <button class="ui grey button" onclick="closeBatchActionsModal()" title="取消" style="flex: 1;">
+                        <i class="cancel icon"></i> 取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 强制刷新JS功能 -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查URL标记，切换到对应的section
+            checkURLHash();
+
+            // 如果URL中包含force_refresh=1，则强制刷新所有CSS和JS
+            if (window.location.search.includes('force_refresh=1')) {
+                const timestamp = new Date().getTime();
+
+                // 更新所有CSS链接
+                document.querySelectorAll('link[rel="stylesheet"]').forEach(function(link) {
+                    if (!link.href.includes('force_refresh')) {
+                        const separator = link.href.includes('?') ? '&' : '?';
+                        link.href = link.href + separator + 'v=' + timestamp;
+                    }
+                });
+
+                // 更新所有JS脚本
+                document.querySelectorAll('script[src]').forEach(function(script) {
+                    if (!script.src.includes('force_refresh')) {
+                        const separator = script.src.includes('?') ? '&' : '?';
+                        script.src = script.src + separator + 'v=' + timestamp;
+                    }
+                });
+
+                console.log('已强制刷新所有CSS和JS文件');
+            }
+        });
+        
+        // 提供全局函数用于强制刷新
+        window.forceRefreshResources = function() {
+            // 获取当前URL中的token参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentToken = urlParams.get('token') || 'ikun';
+            
+            // 获取当前URL，去掉查询参数和哈希
+            const url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            // 添加token和强制刷新参数并跳转
+            window.location.href = url + '?token=' + currentToken + '&force_refresh=1';
+        };
+        
+        // 提供全局函数用于打开音乐链接工具
+        window.openMusicLinkTool = function() {
+            window.open('https://link.hhtjim.com/', '_blank');
+        };
+    </script>
+</body>
+
+</html>
