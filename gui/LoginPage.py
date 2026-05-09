@@ -479,6 +479,9 @@ class LoginWindow(QWidget):
                 'ddos': 'True' if 'ddos' in code_project_mode else 'False'
             }
             
+            # 保存加密登录数据（使 DateCheckThread 能正确读取有效期）
+            self.encryptor.save_login_data(user_data)
+            
             # 模拟登录成功
             self.on_login_result(True, "任意卡密模式登录成功\n", user_data, {})
             
