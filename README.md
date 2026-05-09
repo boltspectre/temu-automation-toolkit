@@ -478,7 +478,8 @@ build.bat
 如有问题或建议，欢迎通过以下方式联系：
 
 - 提交 [Issue](../../issues)
-- 发送邮件至项目维护者
+- Email: mlq5x47hf@mozmail.com
+- Telegram: @unoass
 
 ---
 
