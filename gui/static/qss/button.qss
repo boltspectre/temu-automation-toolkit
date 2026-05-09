@@ -1,0 +1,54 @@
+/* 按钮样式 */
+QPushButton {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #0056b3;
+}
+
+QPushButton:pressed {
+    background-color: #004085;
+}
+
+/* 特殊按钮样式 */
+QPushButton.danger {
+    background-color: #dc3545;
+}
+
+QPushButton.danger:hover {
+    background-color: #c82333;
+}
+
+QPushButton.danger:pressed {
+    background-color: #a02622;
+}
+
+QPushButton.success {
+    background-color: #28a745;
+}
+
+QPushButton.success:hover {
+    background-color: #218838;
+}
+
+QPushButton.success:pressed {
+    background-color: #1e7e34;
+}
+
+QPushButton.warning {
+    background-color: #ffc107;
+}
+
+QPushButton.warning:hover {
+    background-color: #e0a800;
+}
+
+QPushButton.warning:pressed {
+    background-color: #d39e00;
+}

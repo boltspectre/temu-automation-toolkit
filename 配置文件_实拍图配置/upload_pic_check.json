@@ -1,0 +1,48 @@
+{
+  "abnormal_rules": [
+    {
+      "image_name": "小地毯.jpg",
+      "primary": {
+        "check_type": 135,
+        "rule_status": 4
+      },
+      "fallback": {
+        "rule_name": "加拿大-小地毯",
+        "rule_status_toast": "识别有异常"
+      }
+    },
+    {
+      "image_name": "纺织标签.png",
+      "primary": {
+        "check_type": 22,
+        "rule_status": 4
+      },
+      "fallback": {
+        "rule_name": "Triman标签-纺织类产品",
+        "rule_status_toast": "识别有异常"
+      }
+    },
+    {
+      "image_name": "小地毯.jpg",
+      "primary": {
+        "check_type": 1065,
+        "rule_status": 4
+      },
+      "fallback": {
+        "rule_name": "美国-小地毯-易燃标签（本体）",
+        "rule_status_toast": "识别有异常"
+      }
+    },
+    {
+      "image_name": "小毕登.jpg",
+      "primary": {
+        "check_type": 114514,
+        "rule_status": 4
+      },
+      "fallback": {
+        "rule_name": "小毕登-灯具类产品（举例，可以照着添加新规则）",
+        "rule_status_toast": "识别有异常"
+      }
+    }
+  ]
+}

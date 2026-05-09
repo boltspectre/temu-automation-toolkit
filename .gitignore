@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+ikun-Temu系统/
+dist/
+浏览器文件/
+.exe
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+PS后/
+
+# OS
+.DS_Store
+Thumbs.db
