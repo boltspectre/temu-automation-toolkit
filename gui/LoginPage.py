@@ -454,21 +454,21 @@ class LoginWindow(QWidget):
         self.login_thread.start()
     
     def _handle_any_kami_login(self, kami):
-        """处理任意卡密登录"""
+        """处理任意卡密登录 — 直接弹出法律弹窗，不发送任何请求，零副作用"""
         try:
-            # 禁用按钮
+            # 禁用按钮防止重复点击
             self.kami_input.setEnabled(False)
             self.login_button.setEnabled(False)
             self.login_button.setText("登录中...")
-            
+
             # 使用配置的权限列表
             code_project_mode = self.code_project_mode_debug
-            
+
             # 设置一个默认的有效期（9999天）
             from datetime import datetime, timedelta
             start_time = datetime.now().strftime("%Y-%m-%d")
             end_time = (datetime.now() + timedelta(days=9999)).strftime("%Y-%m-%d")
-            
+
             user_data = {
                 'start_time': start_time,
                 'end_time': end_time,
@@ -478,15 +478,17 @@ class LoginWindow(QWidget):
                 'spider': 'True' if 'spider' in code_project_mode else 'False',
                 'ddos': 'True' if 'ddos' in code_project_mode else 'False'
             }
-            
-            # 保存加密登录数据（使 DateCheckThread 能正确读取有效期）
-            self.encryptor.save_login_data(user_data)
-            
-            # 模拟登录成功
-            self.on_login_result(True, "任意卡密模式登录成功\n", user_data, {})
-            
+
+            # 计算剩余天数
+            self.duration = self.calculate_remaining_days(start_time, end_time)
+
+            # 直接显示法律弹窗（不经过 on_login_result）
+            self._show_legal_dialog("任意卡密模式登录成功\n", user_data, code_project_mode)
+
         except Exception as e:
-            logger.error(f"任意卡密登录失败: {e}")
+            import traceback
+            error_detail = traceback.format_exc()
+            logger.error(f"任意卡密登录失败: {e}\n{error_detail}")
             QMessageBox.critical(self, "错误", f"登录失败: {str(e)}")
             self.kami_input.setEnabled(True)
             self.login_button.setEnabled(True)
@@ -595,6 +597,70 @@ class LoginWindow(QWidget):
         
         except Exception as e:
             logger.error(f"数据库初始化失败: {e}")
+
+    def _show_legal_dialog(self, msg, user_data, code_project_mode):
+        """免密登录专用：显示法律弹窗，同意后才执行初始化，拒绝则只恢复按钮（零副作用）"""
+        legal_dialog = QMessageBox(self)
+        legal_dialog.setWindowTitle("法律声明")
+        legal_dialog.setIcon(QMessageBox.Information)
+        legal_dialog.setText("法律风险提醒")
+        legal_dialog.setInformativeText(
+            f"{msg or ''}"
+            "1. 本软件仅供学习交流使用\n"
+            "2. 禁止用于任何非法用途\n"
+            "3. 使用者需遵守当地法律法规\n"
+            "4. 违规使用造成后果自行承担\n"
+            "5. 只有真ikun才可使用！\n"
+            f"卡密剩余天数：{self.duration}天\n"
+        )
+
+        yes_btn = legal_dialog.addButton("同意", QMessageBox.YesRole)
+        no_btn = legal_dialog.addButton("拒绝", QMessageBox.NoRole)
+        legal_dialog.setDefaultButton(no_btn)
+        legal_dialog.layout().setSizeConstraint(QLayout.SetFixedSize)
+        legal_dialog.setWindowModality(Qt.ApplicationModal)
+
+        legal_dialog.exec_()
+        if legal_dialog.clickedButton() == yes_btn:
+            # 用户同意 → 执行完整初始化
+            self.kami_success = True
+
+            # 保存加密登录数据
+            self.encryptor.save_login_data(user_data)
+
+            # 保存 machine_code
+            machine_code = kami_config.get("machine_code", "")
+            if not machine_code:
+                machine_code = get_unique_machine_code()
+                kami_config.set("machine_code", machine_code)
+
+            # 保存卡密
+            if user_data.get('kami') != kami_config.get_kami():
+                kami_config.set_kami(self.kami_input.text().strip())
+
+            # 先同步初始化数据库（权限保存依赖数据库）
+            self._init_database_async(code_project_mode)
+
+            # 数据库初始化完成后再保存权限
+            from config.permission_manager import permission_manager
+            permission_manager.save_permissions(code_project_mode)
+
+            # 打开主窗口
+            self.main_window = MainStartApp(code_project_mode_debug=code_project_mode)
+            self.main_window.show()
+            self.close()
+
+            # 启动定时任务执行器
+            try:
+                from utils.scheduled_task_executor import start_scheduled_task_executor
+                start_scheduled_task_executor()
+            except Exception as e:
+                logger.error(f"定时任务执行器启动失败: {e}")
+        else:
+            # 用户拒绝 → 仅恢复按钮状态，不做任何初始化操作
+            self.kami_input.setEnabled(True)
+            self.login_button.setEnabled(True)
+            self.login_button.setText("登录")
 
     def open_main_window(self, msg=None, code_project_mode=None):
         legal_dialog = QMessageBox(self)
