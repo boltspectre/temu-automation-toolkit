@@ -1376,15 +1376,15 @@ if __name__ == "__main__":
 
     # 测试任务配置
     task_kwargs1 = {
-        "username": "17373633554",
-        "password": "JishuDE3554",
+        "username": "13800138000",
+        "password": "abc123456",
         "headless": False,
         "shop_abbr": "test_shop1",
         "auto_close": True
     }
     task_kwargs2 = {
-        "username": "13079867019",
-        "password": "Jishu111",
+        "username": "13800138000",
+        "password": "abc123456",
         "headless": False,
         "shop_abbr": "test_shop2",
         "auto_close": True
@@ -1401,7 +1401,7 @@ if __name__ == "__main__":
         target_func=create_temu_session, **task_kwargs2
     )
 
-    logger.info(f"✅ 任务添加状态：账号17373633554={success1}，账号13079867019={success2}")
+    logger.info(f"✅ 任务添加状态：账号13800138000={success1}，账号13800138000={success2}")
 
     # 循环打印任务状态
     while True:
